@@ -1134,6 +1134,569 @@ a { color: inherit; text-decoration: none; }
 }
 
 /* ── Story Detail Page ────────────────────────── */
+
+/* ── Journalist Page ─────────────────────────── */
+.journalist-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.journalist-page.no-preview {
+  grid-template-columns: 1fr;
+  max-width: 800px;
+}
+
+.jp-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.jp-editor h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.jp-section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+}
+
+.jp-input {
+  width: 100%;
+  padding: 10px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--transition);
+  box-sizing: border-box;
+}
+.jp-input:focus { border-color: var(--accent); }
+
+.jp-input-headline {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  padding: 14px;
+}
+
+.jp-input-subline {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.jp-byline-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jp-byline-prefix {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-style: italic;
+}
+
+.jp-textarea {
+  width: 100%;
+  min-height: 320px;
+  padding: 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  outline: none;
+  resize: vertical;
+  transition: border-color var(--transition);
+  box-sizing: border-box;
+}
+.jp-textarea:focus { border-color: var(--accent); }
+
+.jp-photo-drop {
+  border: 2px dashed var(--border-color);
+  border-radius: 6px;
+  padding: 24px;
+  text-align: center;
+  background: var(--bg-elevated);
+  cursor: pointer;
+  transition: all var(--transition);
+  position: relative;
+}
+.jp-photo-drop:hover, .jp-photo-drop.dragover {
+  border-color: var(--accent);
+  background: rgba(200,16,46,0.05);
+}
+.jp-photo-drop.has-image {
+  padding: 0;
+  border-style: solid;
+  border-color: var(--border-color);
+  overflow: hidden;
+}
+.jp-photo-drop.has-image img {
+  width: 100%;
+  display: block;
+  border-radius: 4px;
+}
+.jp-photo-drop-label {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+.jp-photo-drop-icon {
+  font-size: 28px;
+  margin-bottom: 4px;
+}
+
+.jp-photos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+}
+.jp-photo-small {
+  height: 100px;
+}
+.jp-photo-remove {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(0,0,0,0.7);
+  border: none;
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.jp-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.jp-tag {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  transition: all var(--transition);
+  font-family: var(--font-body);
+}
+.jp-tag:hover { border-color: var(--accent); color: var(--text-secondary); }
+.jp-tag.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+}
+
+.jp-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.jp-btn {
+  padding: 10px 24px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-body);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all var(--transition);
+  border: none;
+}
+.jp-btn-primary {
+  background: var(--accent);
+  color: var(--white);
+}
+.jp-btn-primary:hover { background: var(--accent-hover); }
+.jp-btn-secondary {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+.jp-btn-secondary:hover { border-color: var(--text-muted); color: var(--white); }
+.jp-btn-ai {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+}
+.jp-btn-ai:hover { opacity: 0.9; }
+
+.jp-ai-panel {
+  background: var(--bg-card);
+  border: 1px solid #6366f1;
+  border-radius: 6px;
+  padding: 18px;
+}
+.jp-ai-panel h4 {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: #a5b4fc;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.jp-ai-text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+}
+.jp-ai-prompt-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+.jp-ai-prompt-input {
+  flex: 1;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  outline: none;
+}
+.jp-ai-prompt-input:focus { border-color: #6366f1; }
+
+/* Preview Panel */
+.jp-preview {
+  background: #fff;
+  border-radius: 8px;
+  padding: 32px 28px;
+  color: #1a1a2e;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  position: sticky;
+  top: 90px;
+  box-shadow: 0 2px 20px rgba(0,0,0,0.15);
+}
+.jp-preview-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #999;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #eee;
+}
+.jp-preview-hero {
+  width: 100%;
+  border-radius: 6px;
+  margin-bottom: 20px;
+}
+.jp-preview-headline {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #111;
+  margin-bottom: 10px;
+}
+.jp-preview-subline {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+.jp-preview-byline {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #eee;
+}
+.jp-preview-body {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #333;
+}
+.jp-preview-body p { margin-bottom: 16px; }
+.jp-preview-inline-img {
+  width: 100%;
+  border-radius: 6px;
+  margin: 16px 0;
+}
+.jp-preview-placeholder {
+  text-align: center;
+  padding: 60px 20px;
+  color: #bbb;
+  font-size: 15px;
+}
+
+/* ── Editor Page ─────────────────────────────── */
+.editor-page {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 28px 24px 60px;
+}
+.editor-page h1 {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 28px;
+}
+
+.ep-home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  max-width: 600px;
+}
+
+.ep-home-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 40px 28px;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+.ep-home-card:hover {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+.ep-home-card-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+}
+.ep-home-card-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.ep-home-card-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.ep-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-bottom: 20px;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  transition: color var(--transition);
+}
+.ep-back-btn:hover { color: var(--white); }
+
+/* Credentials Sub-page */
+.ep-cred-section {
+  margin-bottom: 32px;
+}
+.ep-cred-section h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-color);
+}
+.ep-cred-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ep-cred-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--bg-elevated);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--transition);
+}
+.ep-cred-item:hover { background: var(--bg-hover); }
+.ep-cred-item-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.ep-cred-item-email {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.ep-cred-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 28px;
+  width: 400px;
+  max-width: 90vw;
+}
+.ep-cred-modal h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 16px;
+}
+.ep-cred-detail {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+.ep-cred-detail strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ep-add-form {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+}
+
+/* Layout Sub-page */
+.ep-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  min-height: 600px;
+}
+.ep-layout-tabs {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.ep-layout-tab {
+  display: block;
+  width: 100%;
+  padding: 12px 18px;
+  text-align: left;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-body);
+  transition: all var(--transition);
+}
+.ep-layout-tab:hover { color: var(--text-secondary); background: var(--bg-hover); }
+.ep-layout-tab.active { background: var(--accent); color: var(--white); }
+
+.ep-layout-slots {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  max-height: 600px;
+}
+.ep-slot-group-title {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-top: 12px;
+  margin-bottom: 4px;
+}
+.ep-slot-group-title:first-child { margin-top: 0; }
+
+.ep-slot-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--bg-elevated);
+  border-radius: 4px;
+  font-size: 13px;
+}
+.ep-slot-label {
+  color: var(--text-muted);
+  font-weight: 600;
+  min-width: 120px;
+}
+.ep-slot-story {
+  color: var(--text-primary);
+  cursor: pointer;
+  flex: 1;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ep-slot-story:hover { color: var(--accent); }
+.ep-slot-empty {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 12px;
+  flex: 1;
+  text-align: right;
+}
+
+.ep-layout-preview {
+  background: #fff;
+  border-radius: 8px;
+  padding: 28px;
+  color: #1a1a2e;
+  min-height: 300px;
+}
+
+@media (max-width: 1024px) {
+  .journalist-page { grid-template-columns: 1fr; }
+  .ep-layout { grid-template-columns: 1fr; }
+  .ep-home-grid { grid-template-columns: 1fr; }
+}
 .story-page {
   max-width: 800px;
   margin: 0 auto;
@@ -1248,12 +1811,20 @@ function Header({ currentPage, setPage, user, setModal }) {
               <span style={{ fontSize: 13, color: "#666" }}>
                 {user.name}
               </span>
-              {user.isAdmin && (
+              {(user.role === "journalist" || user.role === "admin") && (
                 <button
                   className="btn-auth btn-login"
-                  onClick={() => setPage({ type: "admin" })}
+                  onClick={() => setPage({ type: "journalist" })}
                 >
-                  Admin
+                  Story Editor
+                </button>
+              )}
+              {(user.role === "editor" || user.role === "admin") && (
+                <button
+                  className="btn-auth btn-login"
+                  onClick={() => setPage({ type: "editor" })}
+                >
+                  Editor
                 </button>
               )}
               <button
@@ -1560,261 +2131,633 @@ function StoryPage({ storyId, setPage }) {
   );
 }
 
-function AdminPage({ setPage }) {
-  const [tab, setTab] = useState("stories");
-  const recentStories = [...ALL_STORIES]
-    .sort((a, b) => b.dateObj - a.dateObj)
-    .slice(0, 12);
+// ─── Journalist Page ─────────────────────────────────────────────────────────
+
+function JournalistPage({ setPage }) {
+  const [headline, setHeadline] = useState("");
+  const [subline, setSubline] = useState("");
+  const [byline, setByline] = useState("");
+  const [storyText, setStoryText] = useState("");
+  const [heroPhoto, setHeroPhoto] = useState("");
+  const [extraPhotos, setExtraPhotos] = useState([]);
+  const [selectedTags, setSelectedTags] = useState([]);
+  const [showPreview, setShowPreview] = useState(false);
+  const [aiResult, setAiResult] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+
+  const toggleTag = (id) =>
+    setSelectedTags((prev) =>
+      prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
+    );
+
+  const addPhoto = () => setExtraPhotos((p) => [...p, ""]);
+  const updatePhoto = (i, val) =>
+    setExtraPhotos((p) => p.map((v, j) => (j === i ? val : v)));
+  const removePhoto = (i) =>
+    setExtraPhotos((p) => p.filter((_, j) => j !== i));
+
+  const runAiEditor = async (customPrompt) => {
+    if (!storyText.trim()) return;
+    setAiLoading(true);
+    setAiResult("");
+    try {
+      const prompt = customPrompt
+        ? `The journalist has this instruction: "${customPrompt}"\n\nHeadline: ${headline}\nSubline: ${subline}\nStory:\n${storyText}\n\nPlease help with the journalist's request. If they want layout/rendering changes, describe exactly how the story should be restructured. Also check for spelling, grammar, and readability.`
+        : `You are an experienced newspaper editor. Review this story for a local news website called The South Shore Press. Check for:\n1. Spelling and grammar errors\n2. Readability improvements\n3. Story structure and flow\n4. Constructive suggestions to make the story more engaging\n\nHeadline: ${headline}\nSubline: ${subline}\nByline: Story by ${byline}\nStory:\n${storyText}\n\nProvide your suggestions in a clear, constructive format. Be specific about what to change and why.`;
+      const response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-20250514",
+          max_tokens: 1000,
+          messages: [{ role: "user", content: prompt }],
+        }),
+      });
+      const data = await response.json();
+      const text = data.content?.map((c) => c.text || "").join("\n") || "No response received.";
+      setAiResult(text);
+    } catch (err) {
+      setAiResult("AI Editor is unavailable. Please try again later. Error: " + err.message);
+    }
+    setAiLoading(false);
+  };
+
+  const PhotoDrop = ({ value, onChange, onRemove, label, small }) => {
+    const [dragOver, setDragOver] = useState(false);
+    const cls = `jp-photo-drop ${small ? "jp-photo-small" : ""} ${
+      value ? "has-image" : ""
+    } ${dragOver ? "dragover" : ""}`;
+    return (
+      <div
+        className={cls}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          const text = e.dataTransfer.getData("text");
+          if (text) onChange(text);
+        }}
+      >
+        {value ? (
+          <>
+            <img src={value} alt="photo" />
+            {onRemove && (
+              <button className="jp-photo-remove" onClick={(e) => { e.stopPropagation(); onRemove(); }}>✕</button>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="jp-photo-drop-icon">📷</div>
+            <div className="jp-photo-drop-label">
+              {label || "Drag & drop an image URL here"}
+            </div>
+            <input
+              className="jp-input"
+              style={{ marginTop: 10, fontSize: 12 }}
+              placeholder="Or paste image URL..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && e.target.value) {
+                  onChange(e.target.value);
+                  e.target.value = "";
+                }
+              }}
+              onBlur={(e) => {
+                if (e.target.value) {
+                  onChange(e.target.value);
+                  e.target.value = "";
+                }
+              }}
+              onClick={(e) => e.stopPropagation()}
+            />
+          </>
+        )}
+      </div>
+    );
+  };
+
+  // Build preview paragraphs with inline photos
+  const buildPreviewBody = () => {
+    const paragraphs = storyText.split("\n").filter((p) => p.trim());
+    const validPhotos = extraPhotos.filter((p) => p);
+    const result = [];
+    const insertInterval = validPhotos.length > 0 ? Math.ceil(paragraphs.length / (validPhotos.length + 1)) : 999;
+    let photoIdx = 0;
+    paragraphs.forEach((p, i) => {
+      result.push(<p key={`p-${i}`}>{p}</p>);
+      if (photoIdx < validPhotos.length && (i + 1) % insertInterval === 0) {
+        result.push(
+          <img
+            key={`img-${photoIdx}`}
+            className="jp-preview-inline-img"
+            src={validPhotos[photoIdx]}
+            alt={`Photo ${photoIdx + 1}`}
+          />
+        );
+        photoIdx++;
+      }
+    });
+    // Append remaining photos
+    while (photoIdx < validPhotos.length) {
+      result.push(
+        <img
+          key={`img-${photoIdx}`}
+          className="jp-preview-inline-img"
+          src={validPhotos[photoIdx]}
+          alt={`Photo ${photoIdx + 1}`}
+        />
+      );
+      photoIdx++;
+    }
+    return result;
+  };
 
   return (
-    <div className="admin-page">
-      <div className="admin-header">
-        <h1>Admin Dashboard</h1>
-        <button className="btn-primary-small">+ New Story</button>
-      </div>
+    <div className={`journalist-page ${!showPreview ? "no-preview" : ""}`}>
+      <div className="jp-editor">
+        <h1>Story Editor</h1>
 
-      <div className="admin-stats">
-        <div className="stat-card">
-          <div className="stat-label">Total Stories</div>
-          <div className="stat-value">{ALL_STORIES.length}</div>
-          <div className="stat-change">↑ 12 this week</div>
+        {/* Headline */}
+        <div>
+          <div className="jp-section-label">Headline</div>
+          <input
+            className="jp-input jp-input-headline"
+            placeholder="Enter your headline..."
+            value={headline}
+            onChange={(e) => setHeadline(e.target.value)}
+          />
         </div>
-        <div className="stat-card">
-          <div className="stat-label">Total Views</div>
-          <div className="stat-value">
-            {Math.floor(
-              ALL_STORIES.reduce((a, s) => a + s.views, 0) / 1000
-            )}
-            K
+
+        {/* Subline */}
+        <div>
+          <div className="jp-section-label">Subline</div>
+          <input
+            className="jp-input jp-input-subline"
+            placeholder="Brief summary or subheading..."
+            value={subline}
+            onChange={(e) => setSubline(e.target.value)}
+          />
+        </div>
+
+        {/* Byline */}
+        <div>
+          <div className="jp-section-label">Byline</div>
+          <div className="jp-byline-row">
+            <span className="jp-byline-prefix">Story by</span>
+            <input
+              className="jp-input"
+              placeholder="Your Name"
+              value={byline}
+              onChange={(e) => setByline(e.target.value)}
+              style={{ flex: 1 }}
+            />
           </div>
-          <div className="stat-change">↑ 8.3% vs last week</div>
         </div>
-        <div className="stat-card">
-          <div className="stat-label">Subscribers</div>
-          <div className="stat-value">2,847</div>
-          <div className="stat-change">↑ 34 new</div>
-        </div>
-        <div className="stat-card">
-          <div className="stat-label">Categories</div>
-          <div className="stat-value">{CATEGORIES.length}</div>
-          <div className="stat-change">Active</div>
-        </div>
-      </div>
 
-      <div className="admin-tabs">
-        {["stories", "categories", "users", "settings"].map((t) => (
-          <button
-            key={t}
-            className={`admin-tab ${tab === t ? "active" : ""}`}
-            onClick={() => setTab(t)}
-          >
-            {t.charAt(0).toUpperCase() + t.slice(1)}
+        {/* Hero Photo */}
+        <div>
+          <div className="jp-section-label">Hero Photo</div>
+          <PhotoDrop
+            value={heroPhoto}
+            onChange={setHeroPhoto}
+            onRemove={() => setHeroPhoto("")}
+            label="Drag & drop hero image URL — this appears at the top of the story"
+          />
+        </div>
+
+        {/* Additional Photos */}
+        <div>
+          <div className="jp-section-label">Additional Photos</div>
+          {extraPhotos.length > 0 && (
+            <div className="jp-photos-grid" style={{ marginBottom: 12 }}>
+              {extraPhotos.map((ph, i) => (
+                <PhotoDrop
+                  key={i}
+                  value={ph}
+                  onChange={(v) => updatePhoto(i, v)}
+                  onRemove={() => removePhoto(i)}
+                  label={`Photo ${i + 2}`}
+                  small
+                />
+              ))}
+            </div>
+          )}
+          <button className="jp-btn jp-btn-secondary" onClick={addPhoto}>
+            + Add a Photo
           </button>
-        ))}
+        </div>
+
+        {/* Story Body */}
+        <div>
+          <div className="jp-section-label">Story</div>
+          <textarea
+            className="jp-textarea"
+            placeholder="Write your story here... Use line breaks to separate paragraphs."
+            value={storyText}
+            onChange={(e) => setStoryText(e.target.value)}
+          />
+        </div>
+
+        {/* Story Tags */}
+        <div>
+          <div className="jp-section-label">Story Tags — Select Sections</div>
+          <div className="jp-tags">
+            {CATEGORIES.map((cat) => (
+              <button
+                key={cat.id}
+                className={`jp-tag ${selectedTags.includes(cat.id) ? "selected" : ""}`}
+                onClick={() => toggleTag(cat.id)}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="jp-actions">
+          <button
+            className="jp-btn jp-btn-ai"
+            onClick={() => runAiEditor()}
+            disabled={aiLoading}
+          >
+            {aiLoading ? "⏳ Analyzing..." : "✨ AI Editor"}
+          </button>
+          <button
+            className="jp-btn jp-btn-primary"
+            onClick={() => setShowPreview(!showPreview)}
+          >
+            {showPreview ? "Hide Preview" : "👁 Preview"}
+          </button>
+          <button className="jp-btn jp-btn-primary">
+            Submit Story
+          </button>
+        </div>
+
+        {/* AI Suggestions */}
+        {(aiResult || aiLoading) && (
+          <div className="jp-ai-panel">
+            <h4>✨ AI Editor Suggestions</h4>
+            {aiLoading ? (
+              <div className="jp-ai-text" style={{ color: "#a5b4fc" }}>
+                Analyzing your story...
+              </div>
+            ) : (
+              <div className="jp-ai-text">{aiResult}</div>
+            )}
+            <div className="jp-ai-prompt-row">
+              <input
+                className="jp-ai-prompt-input"
+                placeholder="Ask AI for specific help... (e.g. 'make the intro more punchy', 'restructure the layout')"
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && aiPrompt.trim()) {
+                    runAiEditor(aiPrompt);
+                    setAiPrompt("");
+                  }
+                }}
+              />
+              <button
+                className="jp-btn jp-btn-ai"
+                style={{ padding: "8px 16px", fontSize: 12 }}
+                onClick={() => {
+                  if (aiPrompt.trim()) {
+                    runAiEditor(aiPrompt);
+                    setAiPrompt("");
+                  }
+                }}
+                disabled={aiLoading}
+              >
+                Send
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      {tab === "stories" && (
-        <div className="admin-card">
-          <div className="admin-card-header">
-            <h3>Recent Stories</h3>
-            <div style={{ display: "flex", gap: 8 }}>
-              <button className="btn-small">Filter</button>
-              <button className="btn-small">Export</button>
+      {/* Preview Panel */}
+      {showPreview && (
+        <div className="jp-preview">
+          <div className="jp-preview-label">Live Preview</div>
+          {!headline && !storyText ? (
+            <div className="jp-preview-placeholder">
+              Start writing to see your story preview here.
             </div>
-          </div>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Headline</th>
-                <th>Category</th>
-                <th>Author</th>
-                <th>Date</th>
-                <th>Status</th>
-                <th>Views</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {recentStories.map((s) => (
-                <tr key={s.id}>
-                  <td
-                    style={{
-                      fontWeight: 600,
-                      color: "var(--text-primary)",
-                      maxWidth: 300,
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    {s.headline}
-                  </td>
-                  <td>{s.categoryLabel}</td>
-                  <td>{s.author}</td>
-                  <td>{s.date}</td>
-                  <td>
-                    <span className="status-badge status-published">
-                      Published
-                    </span>
-                  </td>
-                  <td>{s.views.toLocaleString()}</td>
-                  <td>
-                    <button className="btn-small">Edit</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {tab === "categories" && (
-        <div className="admin-card">
-          <div className="admin-card-header">
-            <h3>Categories</h3>
-            <button className="btn-primary-small">+ Add Category</button>
-          </div>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Slug</th>
-                <th>Stories</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {CATEGORIES.map((cat) => (
-                <tr key={cat.id}>
-                  <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-                    {cat.label}
-                  </td>
-                  <td>{cat.slug}</td>
-                  <td>
-                    {ALL_STORIES.filter((s) => s.category === cat.id).length}
-                  </td>
-                  <td>
-                    <button className="btn-small">Edit</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {tab === "users" && (
-        <div className="admin-card">
-          <div className="admin-card-header">
-            <h3>Users</h3>
-            <button className="btn-primary-small">+ Add User</button>
-          </div>
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Joined</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-                  Admin User
-                </td>
-                <td>admin@southshorepress.com</td>
-                <td>
-                  <span className="status-badge status-published">Admin</span>
-                </td>
-                <td>Jan 1, 2024</td>
-                <td>
-                  <button className="btn-small">Edit</button>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-                  Sarah Mitchell
-                </td>
-                <td>sarah@southshorepress.com</td>
-                <td>
-                  <span className="status-badge status-draft">Editor</span>
-                </td>
-                <td>Mar 15, 2024</td>
-                <td>
-                  <button className="btn-small">Edit</button>
-                </td>
-              </tr>
-              <tr>
-                <td style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-                  Tom Barton
-                </td>
-                <td>tom@southshorepress.com</td>
-                <td>
-                  <span className="status-badge status-draft">Writer</span>
-                </td>
-                <td>Jun 22, 2024</td>
-                <td>
-                  <button className="btn-small">Edit</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {tab === "settings" && (
-        <div className="admin-card" style={{ padding: 32 }}>
-          <h3
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: 20,
-              fontWeight: 700,
-              color: "var(--white)",
-              marginBottom: 24,
-            }}
-          >
-            Site Settings
-          </h3>
-          <div style={{ display: "grid", gap: 20, maxWidth: 500 }}>
-            <div className="form-group">
-              <label>Site Name</label>
-              <input
-                className="form-input"
-                defaultValue="South Shore Press"
-              />
-            </div>
-            <div className="form-group">
-              <label>Tagline</label>
-              <input
-                className="form-input"
-                defaultValue="A Forward Truth Company"
-              />
-            </div>
-            <div className="form-group">
-              <label>Contact Email</label>
-              <input
-                className="form-input"
-                defaultValue="info@southshorepress.com"
-              />
-            </div>
-            <div className="form-group">
-              <label>Stories Per Page</label>
-              <input
-                className="form-input"
-                type="number"
-                defaultValue="20"
-              />
-            </div>
-            <button className="btn-primary-small" style={{ width: "fit-content" }}>
-              Save Changes
-            </button>
-          </div>
+          ) : (
+            <>
+              {heroPhoto && (
+                <img className="jp-preview-hero" src={heroPhoto} alt="Hero" />
+              )}
+              {headline && (
+                <div className="jp-preview-headline">{headline}</div>
+              )}
+              {subline && (
+                <div className="jp-preview-subline">{subline}</div>
+              )}
+              {byline && (
+                <div className="jp-preview-byline">Story by {byline}</div>
+              )}
+              {storyText && (
+                <div className="jp-preview-body">{buildPreviewBody()}</div>
+              )}
+            </>
+          )}
         </div>
       )}
     </div>
   );
+}
+
+// ─── Editor Page ────────────────────────────────────────────────────────────
+
+const INITIAL_CREDENTIALS = {
+  Editor: [
+    { name: "Maria Santos", email: "editor@southshorepress.com", phone: "(631) 555-0101" },
+    { name: "Robert Chen", email: "rchen@southshorepress.com", phone: "(631) 555-0102" },
+  ],
+  Journalist: [
+    { name: "Tom Barton", email: "journalist@southshorepress.com", phone: "(631) 555-0201" },
+    { name: "Sarah Mitchell", email: "smitchell@southshorepress.com", phone: "(631) 555-0202" },
+    { name: "Emily Chen", email: "echen@southshorepress.com", phone: "(631) 555-0203" },
+    { name: "James Rodriguez", email: "jrodriguez@southshorepress.com", phone: "(631) 555-0204" },
+  ],
+  Admin: [
+    { name: "Admin User", email: "admin@southshorepress.com", phone: "(631) 555-0001" },
+  ],
+};
+
+// Slots definition for Site Layout
+const HOME_SLOTS = [
+  { group: "Hero Carousel", items: ["Hero Story 1", "Hero Story 2", "Hero Story 3", "Hero Story 4", "Hero Story 5"] },
+  { group: "Section Rows", items: ["Video Vault Row", "Sports Row", "Local Row", "National Row", "Other News Row", "Opinion Row"] },
+];
+
+function EditorPage({ setPage }) {
+  const [view, setView] = useState("home"); // home | credentials | layout
+  const [credentials, setCredentials] = useState(INITIAL_CREDENTIALS);
+  const [selectedPerson, setSelectedPerson] = useState(null);
+  const [addingTo, setAddingTo] = useState(null); // role string
+  const [newPerson, setNewPerson] = useState({ name: "", email: "", phone: "" });
+  const [layoutTab, setLayoutTab] = useState("home");
+  const [previewStory, setPreviewStory] = useState(null);
+
+  const removePerson = (role, idx) => {
+    setCredentials((prev) => ({
+      ...prev,
+      [role]: prev[role].filter((_, i) => i !== idx),
+    }));
+    setSelectedPerson(null);
+  };
+
+  const addPerson = (role) => {
+    if (!newPerson.name || !newPerson.email) return;
+    setCredentials((prev) => ({
+      ...prev,
+      [role]: [...prev[role], { ...newPerson }],
+    }));
+    setNewPerson({ name: "", email: "", phone: "" });
+    setAddingTo(null);
+  };
+
+  // Build layout slots per tab
+  const getLayoutSlots = (tab) => {
+    if (tab === "home") return HOME_SLOTS;
+    const cat = CATEGORIES.find((c) => c.id === tab);
+    if (!cat) return [];
+    return [
+      { group: `${cat.label} Page`, items: ["Featured Story", "Story 2", "Story 3", "Story 4", "Story 5", "Story 6", "Story 7", "Story 8"] },
+    ];
+  };
+
+  // Assign mock stories to slots
+  const getStoryForSlot = (tab, slotName) => {
+    const catId = tab === "home" ? null : tab;
+    const pool = catId
+      ? ALL_STORIES.filter((s) => s.category === catId)
+      : ALL_STORIES;
+    const idx = slotName.charCodeAt(slotName.length - 1) % pool.length;
+    return pool[idx] || pool[0];
+  };
+
+  if (view === "home") {
+    return (
+      <div className="editor-page">
+        <h1>Editor Dashboard</h1>
+        <div className="ep-home-grid">
+          <div className="ep-home-card" onClick={() => setView("credentials")}>
+            <div className="ep-home-card-icon">👥</div>
+            <div className="ep-home-card-title">Credentials</div>
+            <div className="ep-home-card-desc">Manage editors, journalists & admin access</div>
+          </div>
+          <div className="ep-home-card" onClick={() => setView("layout")}>
+            <div className="ep-home-card-icon">📐</div>
+            <div className="ep-home-card-title">Site Layout</div>
+            <div className="ep-home-card-desc">Assign stories to homepage & section slots</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (view === "credentials") {
+    return (
+      <div className="editor-page">
+        <button className="ep-back-btn" onClick={() => setView("home")}>
+          ← Back to Dashboard
+        </button>
+        <h1>Credentials Management</h1>
+
+        {Object.entries(credentials).map(([role, people]) => (
+          <div className="ep-cred-section" key={role}>
+            <h3>{role}s ({people.length})</h3>
+            <div className="ep-cred-list">
+              {people.map((person, i) => (
+                <div
+                  key={i}
+                  className="ep-cred-item"
+                  onClick={() => setSelectedPerson({ ...person, role, idx: i })}
+                >
+                  <div>
+                    <div className="ep-cred-item-name">{person.name}</div>
+                    <div className="ep-cred-item-email">{person.email}</div>
+                  </div>
+                  <span style={{ fontSize: 18, color: "var(--text-muted)" }}>›</span>
+                </div>
+              ))}
+            </div>
+
+            {addingTo === role ? (
+              <div className="ep-add-form">
+                <input
+                  className="jp-input"
+                  placeholder="Full Name"
+                  value={newPerson.name}
+                  onChange={(e) => setNewPerson((p) => ({ ...p, name: e.target.value }))}
+                />
+                <input
+                  className="jp-input"
+                  placeholder="Email Address"
+                  value={newPerson.email}
+                  onChange={(e) => setNewPerson((p) => ({ ...p, email: e.target.value }))}
+                />
+                <input
+                  className="jp-input"
+                  placeholder="Phone Number"
+                  value={newPerson.phone}
+                  onChange={(e) => setNewPerson((p) => ({ ...p, phone: e.target.value }))}
+                />
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button className="jp-btn jp-btn-primary" style={{ fontSize: 12, padding: "8px 18px" }} onClick={() => addPerson(role)}>
+                    Save
+                  </button>
+                  <button className="jp-btn jp-btn-secondary" style={{ fontSize: 12, padding: "8px 18px" }} onClick={() => { setAddingTo(null); setNewPerson({ name: "", email: "", phone: "" }); }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <button
+                className="jp-btn jp-btn-secondary"
+                style={{ marginTop: 10, fontSize: 12, padding: "8px 18px" }}
+                onClick={() => setAddingTo(role)}
+              >
+                + Add New {role}
+              </button>
+            )}
+          </div>
+        ))}
+
+        {/* Person Detail Modal */}
+        {selectedPerson && (
+          <div className="modal-overlay" onClick={() => setSelectedPerson(null)}>
+            <div className="ep-cred-modal" onClick={(e) => e.stopPropagation()}>
+              <h3>{selectedPerson.name}</h3>
+              <div className="ep-cred-detail"><strong>Role:</strong> {selectedPerson.role}</div>
+              <div className="ep-cred-detail"><strong>Email:</strong> {selectedPerson.email}</div>
+              <div className="ep-cred-detail"><strong>Phone:</strong> {selectedPerson.phone || "N/A"}</div>
+              <div style={{ display: "flex", gap: 10, marginTop: 20 }}>
+                <button
+                  className="jp-btn jp-btn-secondary"
+                  style={{ fontSize: 12, padding: "8px 18px", borderColor: "#ef4444", color: "#ef4444" }}
+                  onClick={() => removePerson(selectedPerson.role, selectedPerson.idx)}
+                >
+                  Remove Credentials
+                </button>
+                <button
+                  className="jp-btn jp-btn-secondary"
+                  style={{ fontSize: 12, padding: "8px 18px" }}
+                  onClick={() => setSelectedPerson(null)}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  if (view === "layout") {
+    const tabs = [{ id: "home", label: "Home Page" }, ...CATEGORIES];
+    const slots = getLayoutSlots(layoutTab);
+
+    return (
+      <div className="editor-page">
+        <button className="ep-back-btn" onClick={() => setView("home")}>
+          ← Back to Dashboard
+        </button>
+        <h1>Site Layout</h1>
+        <div className="ep-layout">
+          {/* Left: Tabs */}
+          <div className="ep-layout-tabs">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                className={`ep-layout-tab ${layoutTab === t.id ? "active" : ""}`}
+                onClick={() => { setLayoutTab(t.id); setPreviewStory(null); }}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Right: Slots + Preview */}
+          <div>
+            {!previewStory ? (
+              <div className="ep-layout-slots">
+                {slots.map((group) => (
+                  <div key={group.group}>
+                    <div className="ep-slot-group-title">{group.group}</div>
+                    {group.items.map((slotName) => {
+                      const story = getStoryForSlot(layoutTab, slotName);
+                      return (
+                        <div className="ep-slot-item" key={slotName}>
+                          <span className="ep-slot-label">{slotName}</span>
+                          {story ? (
+                            <span
+                              className="ep-slot-story"
+                              onClick={() => setPreviewStory(story)}
+                            >
+                              {story.headline}
+                            </span>
+                          ) : (
+                            <span className="ep-slot-empty">Empty slot</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="ep-layout-preview">
+                <button
+                  className="ep-back-btn"
+                  style={{ color: "#666" }}
+                  onClick={() => setPreviewStory(null)}
+                >
+                  ← Back to Slots
+                </button>
+                <div className="jp-preview-label">Story Preview</div>
+                <img
+                  className="jp-preview-hero"
+                  src={previewStory.image}
+                  alt="hero"
+                />
+                <div className="jp-preview-headline">{previewStory.headline}</div>
+                <div className="jp-preview-subline">{previewStory.excerpt}</div>
+                <div className="jp-preview-byline">
+                  Story by {previewStory.author}
+                </div>
+                <div className="jp-preview-body">
+                  <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod
+                    tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+                    quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+                  </p>
+                  <p>
+                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                    fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa qui officia deserunt mollit anim id est laborum.
+                  </p>
+                  <p>
+                    Curabitur pretium tincidunt lacus. Nulla gravida orci a odio. Nullam varius,
+                    turpis et commodo pharetra, est eros bibendum elit, nec luctus magna felis
+                    sollicitudin mauris.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }
 
 function Footer({ setPage }) {
@@ -1887,20 +2830,23 @@ function AuthModal({ type, onClose, onSwitch, onLogin }) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
 
+  const CREDENTIALS = {
+    "admin@southshorepress.com": { pw: "admin123", name: "Admin", role: "admin" },
+    "editor@southshorepress.com": { pw: "editor123", name: "Maria Santos", role: "editor" },
+    "journalist@southshorepress.com": { pw: "journalist123", name: "Tom Barton", role: "journalist" },
+  };
+
   const handleSubmit = () => {
     if (type === "login") {
-      // Admin credentials
-      if (
-        email === "admin@southshorepress.com" &&
-        password === "admin123"
-      ) {
-        onLogin({ name: "Admin", email, isAdmin: true });
+      const cred = CREDENTIALS[email];
+      if (cred && password === cred.pw) {
+        onLogin({ name: cred.name, email, role: cred.role, isAdmin: cred.role === "admin" });
       } else if (email && password) {
-        onLogin({ name: email.split("@")[0], email, isAdmin: false });
+        onLogin({ name: email.split("@")[0], email, role: "reader", isAdmin: false });
       }
     } else {
       if (name && email && password) {
-        onLogin({ name, email, isAdmin: false });
+        onLogin({ name, email, role: "reader", isAdmin: false });
       }
     }
   };
@@ -1962,16 +2908,11 @@ function AuthModal({ type, onClose, onSwitch, onLogin }) {
           )}
         </div>
         {type === "login" && (
-          <p
-            style={{
-              textAlign: "center",
-              fontSize: 11,
-              color: "var(--text-muted)",
-              marginTop: 12,
-            }}
-          >
-            Admin: admin@southshorepress.com / admin123
-          </p>
+          <div style={{ textAlign: "center", fontSize: 11, color: "var(--text-muted)", marginTop: 12, lineHeight: 1.8 }}>
+            <div>Admin: admin@southshorepress.com / admin123</div>
+            <div>Editor: editor@southshorepress.com / editor123</div>
+            <div>Journalist: journalist@southshorepress.com / journalist123</div>
+          </div>
         )}
       </div>
     </div>
@@ -2016,8 +2957,11 @@ export default function App() {
         {page.type === "story" && (
           <StoryPage storyId={page.id} setPage={navigate} />
         )}
-        {page.type === "admin" && user?.isAdmin && (
-          <AdminPage setPage={navigate} />
+        {page.type === "journalist" && (user?.role === "journalist" || user?.role === "admin") && (
+          <JournalistPage setPage={navigate} />
+        )}
+        {page.type === "editor" && (user?.role === "editor" || user?.role === "admin") && (
+          <EditorPage setPage={navigate} />
         )}
       </main>
       <Footer setPage={navigate} />
