@@ -239,13 +239,13 @@ a { color: inherit; text-decoration: none; }
 .header-logo-zone {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 12px 24px 14px;
+  padding: 6px 24px;
   position: relative;
-  min-height: 210px;
+  min-height: 360px;
   display: grid;
   grid-template-rows: auto 1fr auto;
   align-items: stretch;
-  row-gap: 6px;
+  row-gap: 0;
 }
 
 .header-top-row,
@@ -314,8 +314,9 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  padding: 6px 0;
+  gap: 6px;
+  padding: 4px 0;
+  min-height: 0;
 }
 
 .header-slogan {
@@ -329,7 +330,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .header-logo-large {
-  max-height: 150px;
+  max-height: 290px;
   width: auto;
   object-fit: contain;
   cursor: pointer;
