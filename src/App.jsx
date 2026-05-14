@@ -228,9 +228,6 @@ a { color: inherit; text-decoration: none; }
 
 /* ── Header (semafor-style, 2 zones) ─────────────────────────────────── */
 .site-header {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
   background: #ffffff;
   border-bottom: 1px solid #1a1a1a;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
