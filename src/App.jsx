@@ -241,11 +241,10 @@ a { color: inherit; text-decoration: none; }
   margin: 0 auto;
   padding: 6px 24px;
   position: relative;
-  min-height: 360px;
   display: grid;
-  grid-template-rows: auto 1fr auto;
-  align-items: stretch;
-  row-gap: 0;
+  grid-template-rows: auto auto auto;
+  align-items: center;
+  row-gap: 4px;
 }
 
 .header-top-row,
@@ -314,9 +313,8 @@ a { color: inherit; text-decoration: none; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 4px 0;
-  min-height: 0;
+  gap: 2px;
+  padding: 0;
 }
 
 .header-slogan {
