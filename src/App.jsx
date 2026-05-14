@@ -239,20 +239,30 @@ a { color: inherit; text-decoration: none; }
 .header-logo-zone {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 6px 24px;
+  padding: 12px 24px;
   position: relative;
-  display: grid;
-  grid-template-rows: auto auto auto;
+  display: flex;
   align-items: center;
-  row-gap: 4px;
+  justify-content: center;
 }
 
+/* Corners pinned to the zone's edges so they don't add vertical height to
+   the layout — the zone's height is now driven entirely by the slogan+logo
+   block, which is itself vertically centered between the two divider lines. */
 .header-top-row {
+  position: absolute;
+  top: 6px;
+  left: 24px;
+  right: 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;  /* text-only items align with the TOP edge of the boxed buttons */
 }
 .header-bottom-row {
+  position: absolute;
+  bottom: 6px;
+  left: 24px;
+  right: 24px;
   display: flex;
   justify-content: space-between;
   align-items: flex-end;    /* text-only items align with the BOTTOM edge of the boxed buttons */
