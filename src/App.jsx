@@ -247,11 +247,15 @@ a { color: inherit; text-decoration: none; }
   row-gap: 4px;
 }
 
-.header-top-row,
+.header-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;  /* text-only items align with the TOP edge of the boxed buttons */
+}
 .header-bottom-row {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;    /* text-only items align with the BOTTOM edge of the boxed buttons */
 }
 
 .header-link-briefing {
@@ -264,7 +268,8 @@ a { color: inherit; text-decoration: none; }
   cursor: pointer;
   background: none;
   border: none;
-  padding: 4px 0;
+  padding: 0;
+  line-height: 1;
 }
 .header-link-briefing:hover { color: var(--accent); }
 
@@ -306,6 +311,7 @@ a { color: inherit; text-decoration: none; }
   color: #555;
   font-weight: 500;
   letter-spacing: 0.3px;
+  line-height: 1;
 }
 
 .header-center {
