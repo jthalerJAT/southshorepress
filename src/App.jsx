@@ -239,12 +239,13 @@ a { color: inherit; text-decoration: none; }
 .header-logo-zone {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 10px 24px;
+  padding: 12px 24px 14px;
   position: relative;
-  height: 190px;
+  min-height: 210px;
   display: grid;
   grid-template-rows: auto 1fr auto;
   align-items: stretch;
+  row-gap: 6px;
 }
 
 .header-top-row,
@@ -321,14 +322,14 @@ a { color: inherit; text-decoration: none; }
   font-family: var(--font-display);
   font-style: italic;
   font-variant: small-caps;
-  font-size: 14px;
-  letter-spacing: 2.5px;
-  color: #4a4a4a;
+  font-size: 11px;
+  letter-spacing: 1.8px;
+  color: #555;
   font-weight: 500;
 }
 
 .header-logo-large {
-  max-height: 88px;
+  max-height: 150px;
   width: auto;
   object-fit: contain;
   cursor: pointer;
@@ -446,11 +447,20 @@ a { color: inherit; text-decoration: none; }
 .hero-section {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 28px 24px;
+  padding: 40px 24px 28px;
   display: grid;
   grid-template-columns: 1fr 380px;
   gap: 24px;
 }
+
+/* Breathing room under the header for non-home pages too */
+main > section:first-child,
+main > .page-form:first-child,
+main > .story-page:first-child,
+main > .category-page:first-child {
+  margin-top: 0;
+}
+main { padding-top: 8px; }
 
 .hero-carousel {
   position: relative;
