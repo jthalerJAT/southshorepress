@@ -6,12 +6,12 @@ const LOGO_SRC = "data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BS
 const CATEGORIES = [
   { id: "local", label: "Local", slug: "local" },
   { id: "state", label: "State", slug: "state" },
-  { id: "national", label: "National", slug: "national" },
+  { id: "national", label: "Nation", slug: "national" },
   { id: "world", label: "World", slug: "world" },
   { id: "sports", label: "Sports", slug: "sports" },
-  { id: "business", label: "Business", slug: "business" },
+  { id: "crime", label: "Crime", slug: "crime" },
   { id: "opinion", label: "Opinion", slug: "opinion" },
-  { id: "things-to-do", label: "Things To Do", slug: "things-to-do" },
+  { id: "legals", label: "Legals", slug: "legals" },
   { id: "video-vault", label: "Video Vault", slug: "video-vault" },
 ];
 
@@ -183,7 +183,7 @@ const HERO_STORIES = [
   ALL_STORIES.find((s) => s.headline.includes("Suffolk County Small")),
 ].filter(Boolean);
 
-const TOP_STORIES = ALL_STORIES.sort((a, b) => b.views - a.views).slice(0, 6);
+const TOP_STORIES = ALL_STORIES.sort((a, b) => b.views - a.views).slice(0, 10);
 
 // ─── Styles ──────────────────────────────────────────────────────────────────
 const CSS = `
@@ -226,73 +226,198 @@ body {
 
 a { color: inherit; text-decoration: none; }
 
-/* ── Header ─────────────────────────────────── */
+/* ── Header (semafor-style, 2 zones) ─────────────────────────────────── */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 1000;
   background: #ffffff;
-  border-bottom: 1px solid #e0e0e5;
+  border-bottom: 1px solid #1a1a1a;
   box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-.header-row {
-  display: flex;
-  align-items: center;
+.header-logo-zone {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 24px;
-  gap: 20px;
+  padding: 10px 24px;
+  position: relative;
+  height: 190px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  align-items: stretch;
 }
 
-.logo-area {
+.header-top-row,
+.header-bottom-row {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+}
+
+.header-link-briefing {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  color: #333;
   cursor: pointer;
-  flex-shrink: 0;
+  background: none;
+  border: none;
+  padding: 4px 0;
+}
+.header-link-briefing:hover { color: var(--accent); }
+
+.header-btn-signin {
+  background: #ffffff;
+  border: 1.5px solid #1a1a1a;
+  color: #1a1a1a;
+  padding: 8px 22px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: var(--font-body);
+  transition: background var(--transition), color var(--transition);
+}
+.header-btn-signin:hover { background: #1a1a1a; color: #fff; }
+
+.header-btn-subscribe {
+  background: var(--accent);
+  border: 1.5px solid var(--accent);
+  color: #ffffff;
+  padding: 8px 22px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  border-radius: 2px;
+  font-family: var(--font-body);
+  transition: background var(--transition);
+}
+.header-btn-subscribe:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+.header-timestamp {
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: #555;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+
+.header-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
   padding: 6px 0;
 }
 
-.logo-img {
-  height: 64px;
-  width: auto;
-  object-fit: contain;
+.header-slogan {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-variant: small-caps;
+  font-size: 14px;
+  letter-spacing: 2.5px;
+  color: #4a4a4a;
+  font-weight: 500;
 }
 
-.header-actions {
+.header-logo-large {
+  max-height: 88px;
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.header-divider {
+  border-top: 1.5px solid #1a1a1a;
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.header-tabs-zone {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  height: 48px;
+  gap: 12px;
+}
+
+.header-tabs {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+  height: 48px;
+}
+.header-tabs::-webkit-scrollbar { display: none; }
+
+.header-tab {
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: color var(--transition), border-color var(--transition);
+}
+.header-tab:hover { color: var(--accent); }
+.header-tab.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 14px;
   flex-shrink: 0;
 }
 
-.search-box {
+.header-search {
   display: flex;
   align-items: center;
   background: #f4f4f6;
   border: 1px solid #ddd;
   border-radius: 24px;
-  padding: 6px 14px;
+  padding: 5px 12px;
   gap: 6px;
   transition: border-color var(--transition);
 }
-
-.search-box:focus-within { border-color: var(--accent); }
-
-.search-box input {
-  background: none;
-  border: none;
-  outline: none;
-  color: #1a1a2e;
-  font-family: var(--font-body);
-  font-size: 13px;
-  width: 160px;
+.header-search:focus-within { border-color: var(--accent); }
+.header-search input {
+  background: none; border: none; outline: none;
+  color: #1a1a1a; font-family: var(--font-body); font-size: 12.5px; width: 150px;
 }
+.header-search input::placeholder { color: #999; }
+.header-search .search-icon { color: #888; font-size: 13px; }
 
-.search-box input::placeholder { color: #999; }
+.header-socials { display: flex; align-items: center; gap: 10px; }
+.header-social-icon {
+  width: 17px; height: 17px;
+  color: #555;
+  cursor: pointer;
+  transition: color var(--transition);
+  display: flex;
+  align-items: center;
+}
+.header-social-icon:hover { color: var(--accent); }
 
-.search-icon { color: #888; font-size: 14px; }
-
+/* Legacy auth-button classes preserved — still used by modals + admin pages */
 .btn-auth {
   padding: 7px 18px;
   border-radius: 4px;
@@ -304,67 +429,18 @@ a { color: inherit; text-decoration: none; }
   letter-spacing: 0.3px;
   text-transform: uppercase;
 }
-
 .btn-login {
   background: none;
   border: 1px solid #d0d0d5;
   color: #444;
 }
 .btn-login:hover { border-color: #888; color: #111; }
-
 .btn-signup {
   background: var(--accent);
   border: 1px solid var(--accent);
   color: var(--white);
 }
 .btn-signup:hover { background: var(--accent-hover); }
-
-.nav-bar {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  overflow-x: auto;
-  scrollbar-width: none;
-  flex: 1;
-  min-width: 0;
-}
-.nav-bar::-webkit-scrollbar { display: none; }
-
-.nav-link {
-  padding: 8px 12px;
-  font-size: 11.5px;
-  font-weight: 600;
-  letter-spacing: 0.6px;
-  text-transform: uppercase;
-  color: #555;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: color var(--transition);
-  position: relative;
-  border-bottom: 2px solid transparent;
-}
-
-.nav-link:hover { color: #111; }
-.nav-link.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-
-.social-links {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-  padding: 10px 0;
-}
-
-.social-link {
-  color: #888;
-  font-size: 13px;
-  cursor: pointer;
-  transition: color var(--transition);
-}
-.social-link:hover { color: #111; }
 
 /* ── Hero Section ─────────────────────────────── */
 .hero-section {
@@ -436,30 +512,51 @@ a { color: inherit; text-decoration: none; }
   max-width: 600px;
 }
 
-.hero-dots {
+.hero-arrow {
   position: absolute;
-  bottom: 12px;
-  right: 24px;
-  display: flex;
-  gap: 6px;
-}
-
-.hero-dot {
-  width: 8px;
-  height: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.3);
+  background: rgba(0,0,0,0.45);
+  border: none;
+  color: #fff;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 300;
   transition: background var(--transition);
+  z-index: 2;
 }
-.hero-dot.active { background: var(--accent); }
+.hero-arrow:hover { background: var(--accent); }
+.hero-arrow-left { left: 16px; }
+.hero-arrow-right { right: 16px; }
 
-/* ── Top Stories Sidebar ──────────────────────── */
+.hero-counter {
+  position: absolute;
+  bottom: 14px;
+  right: 20px;
+  background: rgba(0,0,0,0.55);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  z-index: 2;
+}
+
+/* ── Top Stories Sidebar (10 items, 6 visible, scrollable) ────────── */
 .top-stories-rail {
   background: var(--bg-card);
   border-radius: var(--radius);
   border: 1px solid var(--border-subtle);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .rail-header {
@@ -468,6 +565,7 @@ a { color: inherit; text-decoration: none; }
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .rail-header-dot {
@@ -486,34 +584,40 @@ a { color: inherit; text-decoration: none; }
   color: var(--text-secondary);
 }
 
+/* Scrollable body. Sized so ~6 items fit before scroll kicks in
+   (each item is ~78px including borders). 6 items * 78px ≈ 468px. */
+.top-stories-body {
+  overflow-y: auto;
+  max-height: 470px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) var(--bg-card);
+}
+.top-stories-body::-webkit-scrollbar { width: 6px; }
+.top-stories-body::-webkit-scrollbar-track { background: var(--bg-card); }
+.top-stories-body::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+.top-stories-body::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
 .top-story-item {
-  padding: 14px 20px;
+  padding: 13px 20px;
   border-bottom: 1px solid var(--border-subtle);
   cursor: pointer;
   transition: background var(--transition);
   display: flex;
-  gap: 14px;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 4px;
 }
 .top-story-item:last-child { border-bottom: none; }
 .top-story-item:hover { background: var(--bg-hover); }
 
-.top-story-num {
-  font-family: var(--font-display);
-  font-size: 24px;
-  font-weight: 800;
-  color: var(--accent);
-  line-height: 1;
-  min-width: 24px;
-}
-
-.top-story-content h4 {
+.top-story-headline {
   font-family: var(--font-body);
   font-size: 14px;
   font-weight: 600;
-  line-height: 1.4;
+  line-height: 1.35;
   color: var(--text-primary);
-  margin-bottom: 4px;
 }
 
 .top-story-meta {
@@ -1764,6 +1868,162 @@ a { color: inherit; text-decoration: none; }
   .admin-stats { grid-template-columns: 1fr; }
 }
 
+/* ── Auth / Subscribe page forms ───────────────── */
+.page-form {
+  max-width: 480px;
+  margin: 48px auto 64px;
+  padding: 0 24px;
+}
+.page-form-wide { max-width: 920px; }
+.page-form-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 32px 36px;
+}
+.page-form-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.page-form-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+}
+.page-form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.page-form-row.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.page-form-row.three-col { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 12px; }
+.page-form-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+.page-form-label .req { color: var(--accent); margin-left: 3px; }
+.page-form-input {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 10px 12px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color var(--transition);
+  width: 100%;
+}
+.page-form-input:focus { border-color: var(--accent); }
+.page-form-input::placeholder { color: var(--text-muted); }
+.page-form-section-divider {
+  border-top: 1px solid var(--border-color);
+  margin: 22px 0 18px;
+  padding-top: 4px;
+}
+.page-form-section-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+.page-form-submit {
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  padding: 13px 24px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 8px;
+  width: 100%;
+  font-family: var(--font-body);
+  transition: background var(--transition);
+}
+.page-form-submit:hover:not(:disabled) { background: var(--accent-hover); }
+.page-form-submit:disabled { opacity: 0.45; cursor: not-allowed; }
+.page-form-preview-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 12px;
+  font-style: italic;
+}
+.page-form-link {
+  font-size: 13px;
+  color: var(--accent);
+  cursor: pointer;
+  background: none; border: none;
+  padding: 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+.page-form-link:hover { text-decoration: underline; }
+.page-form-link-row { display: flex; justify-content: space-between; margin-top: 18px; font-size: 13px; }
+.page-form-required-note { font-size: 11px; color: var(--text-muted); margin-top: 6px; }
+
+/* Subscribe-specific */
+.subscribe-plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 8px; }
+.subscribe-plan-card {
+  background: var(--bg-elevated);
+  border: 2px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 22px 18px 18px;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  text-align: center;
+}
+.subscribe-plan-card:hover { border-color: var(--text-secondary); }
+.subscribe-plan-card.selected { border-color: var(--accent); background: rgba(200,16,46,0.10); }
+.subscribe-plan-name {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+.subscribe-plan-price {
+  font-family: var(--font-display); font-size: 30px; font-weight: 800;
+  color: var(--text-primary); margin-bottom: 2px;
+}
+.subscribe-plan-period { font-size: 12px; color: var(--text-muted); }
+.subscribe-plan-badge {
+  display: inline-block;
+  background: var(--accent);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-top: 8px;
+}
+.subscribe-disclaimer {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  margin: 16px 0;
+  line-height: 1.55;
+  background: var(--bg-elevated);
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 4px 4px 0;
+}
+.subscribe-total {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 14px 0;
+  margin: 8px 0 14px;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+.subscribe-total-label { font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1.2px; font-weight: 700; }
+.subscribe-total-amount { font-family: var(--font-display); font-size: 26px; font-weight: 800; color: var(--text-primary); }
+
 /* ── Animations ───────────────────────────────── */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(16px); }
@@ -1779,77 +2039,149 @@ a { color: inherit; text-decoration: none; }
 
 // ─── Components ──────────────────────────────────────────────────────────────
 
-function Header({ currentPage, setPage, user, setModal }) {
+function useLiveClock() {
+  const [now, setNow] = useState(() => new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  return now;
+}
+
+function formatHeaderTimestamp(d) {
+  // "7:12 PM EST - Thursday, May 14, 2026"
+  const time = d.toLocaleTimeString("en-US", {
+    hour: "numeric", minute: "2-digit", hour12: true,
+    timeZone: "America/New_York",
+  });
+  const date = d.toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric",
+    timeZone: "America/New_York",
+  });
+  return `${time} EST - ${date}`;
+}
+
+const SocialIcons = {
+  twitter: (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117l11.966 15.644z"/>
+    </svg>
+  ),
+  facebook: (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+      <path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/>
+    </svg>
+  ),
+  tiktok: (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+      <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.1Z"/>
+    </svg>
+  ),
+  youtube: (
+    <svg viewBox="0 0 24 24" fill="currentColor" width="100%" height="100%">
+      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+    </svg>
+  ),
+};
+
+function Header({ currentPage, setPage, user, onSignOut }) {
+  const now = useLiveClock();
+  const isActiveCat = (id) => currentPage.type === "category" && currentPage.id === id;
+  const isStaff = user && (user.role === "admin" || user.role === "editor" || user.role === "journalist");
   return (
     <header className="site-header">
-      <div className="header-row">
-        <div className="logo-area" onClick={() => setPage({ type: "home" })}>
-          <img className="logo-img" src={LOGO_SRC} alt="The South Shore Press" />
-        </div>
-        <nav className="nav-bar">
-          {CATEGORIES.map((cat) => (
-            <div
-              key={cat.id}
-              className={`nav-link ${
-                currentPage.type === "category" && currentPage.id === cat.id
-                  ? "active"
-                  : ""
-              }`}
-              onClick={() => setPage({ type: "category", id: cat.id })}
-            >
-              {cat.label}
-            </div>
-          ))}
-        </nav>
-        <div className="header-actions">
-          <div className="search-box">
-            <span className="search-icon">🔍</span>
-            <input type="text" placeholder="Search..." />
-          </div>
+      <div className="header-divider" />
+      <div className="header-logo-zone">
+        <div className="header-top-row">
+          <button
+            className="header-link-briefing"
+            onClick={() => setPage({ type: "email-briefings" })}
+          >
+            Email Briefings
+          </button>
           {user ? (
-            <>
-              <span style={{ fontSize: 13, color: "#666" }}>
-                {user.name}
-              </span>
-              {(user.role === "journalist" || user.role === "admin") && (
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              {isStaff && (user.role === "journalist" || user.role === "admin") && (
                 <button
-                  className="btn-auth btn-login"
+                  className="header-link-briefing"
                   onClick={() => setPage({ type: "journalist" })}
                 >
                   Story Editor
                 </button>
               )}
-              {(user.role === "editor" || user.role === "admin") && (
+              {isStaff && (user.role === "editor" || user.role === "admin") && (
                 <button
-                  className="btn-auth btn-login"
+                  className="header-link-briefing"
                   onClick={() => setPage({ type: "editor" })}
                 >
-                  Editor
+                  Editor Portal
                 </button>
               )}
-              <button
-                className="btn-auth btn-login"
-                onClick={() => setModal("logout")}
-              >
-                Log Out
+              <span style={{ fontSize: 11.5, color: "#555", letterSpacing: 0.5 }}>
+                Hi, {user.name}
+              </span>
+              <button className="header-btn-signin" onClick={onSignOut}>
+                Sign Out
               </button>
-            </>
+            </div>
           ) : (
-            <>
-              <button
-                className="btn-auth btn-login"
-                onClick={() => setModal("login")}
-              >
-                Log In
-              </button>
-              <button
-                className="btn-auth btn-signup"
-                onClick={() => setModal("signup")}
-              >
-                Sign Up
-              </button>
-            </>
+            <button
+              className="header-btn-signin"
+              onClick={() => setPage({ type: "sign-in" })}
+            >
+              Sign In
+            </button>
           )}
+        </div>
+        <div className="header-center">
+          <div className="header-slogan">From Long Island to the World</div>
+          <img
+            className="header-logo-large"
+            src={LOGO_SRC}
+            alt="The South Shore Press"
+            onClick={() => setPage({ type: "home" })}
+          />
+        </div>
+        <div className="header-bottom-row">
+          <div className="header-timestamp">{formatHeaderTimestamp(now)}</div>
+          <button
+            className="header-btn-subscribe"
+            onClick={() => setPage({ type: "subscribe" })}
+          >
+            Subscribe Now
+          </button>
+        </div>
+      </div>
+      <div className="header-divider" />
+      <div className="header-tabs-zone">
+        <div className="header-tabs">
+          <div
+            className={`header-tab ${currentPage.type === "home" ? "active" : ""}`}
+            onClick={() => setPage({ type: "home" })}
+          >
+            Home
+          </div>
+          {CATEGORIES.map((cat) => (
+            <div
+              key={cat.id}
+              className={`header-tab ${isActiveCat(cat.id) ? "active" : ""}`}
+              onClick={() => setPage({ type: "category", id: cat.id })}
+            >
+              {cat.label}
+            </div>
+          ))}
+        </div>
+        <div className="header-tools">
+          <div className="header-search">
+            <span className="search-icon">🔍</span>
+            <input type="text" placeholder="Search..." />
+          </div>
+          <div className="header-socials">
+            <a className="header-social-icon" href="https://twitter.com/southshorepress" target="_blank" rel="noreferrer" aria-label="Twitter / X">{SocialIcons.twitter}</a>
+            <a className="header-social-icon" href="https://facebook.com/southshorepress" target="_blank" rel="noreferrer" aria-label="Facebook">{SocialIcons.facebook}</a>
+            <a className="header-social-icon" href="https://tiktok.com/@southshorepress" target="_blank" rel="noreferrer" aria-label="TikTok">{SocialIcons.tiktok}</a>
+            <a className="header-social-icon" href="https://youtube.com/@southshorepress" target="_blank" rel="noreferrer" aria-label="YouTube">{SocialIcons.youtube}</a>
+          </div>
         </div>
       </div>
     </header>
@@ -1859,13 +2191,21 @@ function Header({ currentPage, setPage, user, setModal }) {
 function HeroCarousel() {
   const [active, setActive] = useState(0);
   const timerRef = useRef(null);
+  const n = HERO_STORIES.length;
+
+  const resetTimer = () => {
+    clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => setActive((p) => (p + 1) % n), 5000);
+  };
 
   useEffect(() => {
-    timerRef.current = setInterval(() => {
-      setActive((p) => (p + 1) % HERO_STORIES.length);
-    }, 5000);
+    resetTimer();
     return () => clearInterval(timerRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const goPrev = () => { setActive((p) => (p - 1 + n) % n); resetTimer(); };
+  const goNext = () => { setActive((p) => (p + 1) % n); resetTimer(); };
 
   return (
     <div className="hero-carousel">
@@ -1879,22 +2219,9 @@ function HeroCarousel() {
           </div>
         </div>
       ))}
-      <div className="hero-dots">
-        {HERO_STORIES.map((_, i) => (
-          <div
-            key={i}
-            className={`hero-dot ${i === active ? "active" : ""}`}
-            onClick={() => {
-              setActive(i);
-              clearInterval(timerRef.current);
-              timerRef.current = setInterval(
-                () => setActive((p) => (p + 1) % HERO_STORIES.length),
-                5000
-              );
-            }}
-          />
-        ))}
-      </div>
+      <button className="hero-arrow hero-arrow-left" aria-label="Previous story" onClick={goPrev}>‹</button>
+      <button className="hero-arrow hero-arrow-right" aria-label="Next story" onClick={goNext}>›</button>
+      <div className="hero-counter">{active + 1} / {n}</div>
     </div>
   );
 }
@@ -1906,21 +2233,20 @@ function TopStoriesRail({ setPage }) {
         <div className="rail-header-dot" />
         <h3>Top Stories</h3>
       </div>
-      {TOP_STORIES.map((story, i) => (
-        <div
-          key={story.id}
-          className="top-story-item"
-          onClick={() => setPage({ type: "story", id: story.id })}
-        >
-          <div className="top-story-num">{i + 1}</div>
-          <div className="top-story-content">
-            <h4>{story.headline}</h4>
+      <div className="top-stories-body">
+        {TOP_STORIES.map((story) => (
+          <div
+            key={story.id}
+            className="top-story-item"
+            onClick={() => setPage({ type: "story", id: story.id })}
+          >
+            <div className="top-story-headline">{story.headline}</div>
             <div className="top-story-meta">
               {story.categoryLabel} · {story.date}
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -2919,6 +3245,341 @@ function AuthModal({ type, onClose, onSwitch, onLogin }) {
   );
 }
 
+// ─── Client-side credentials (placeholder until real backend lands) ─────────
+// Shared between AuthModal (legacy) and SignInPage. When backend exists this
+// goes away and SignInPage POSTs to /api/auth/login.
+const CREDENTIALS = {
+  "admin@southshorepress.com": { pw: "admin123", name: "Admin", role: "admin" },
+  "editor@southshorepress.com": { pw: "editor123", name: "Maria Santos", role: "editor" },
+  "journalist@southshorepress.com": { pw: "journalist123", name: "Tom Barton", role: "journalist" },
+};
+
+function tryClientLogin(usernameOrEmail, password) {
+  const email = (usernameOrEmail || "").trim().toLowerCase();
+  const cred = CREDENTIALS[email];
+  if (cred && cred.pw === password) {
+    return { name: cred.name, email, role: cred.role, isAdmin: cred.role === "admin" };
+  }
+  return null;
+}
+
+// Landing page after a successful sign-in: route staff straight to their work.
+function landingPageForRole(role) {
+  if (role === "admin" || role === "editor") return { type: "editor" };
+  if (role === "journalist") return { type: "journalist" };
+  return { type: "home" };
+}
+
+// ─── New auth + subscribe pages ──────────────────────────────────────────────
+// All form submits are visually present but disabled — backend wiring comes later.
+// EXCEPT SignInPage, which uses the client-side CREDENTIALS map above so the
+// admin/editor/journalist portals stay reachable during design phase.
+
+function EmailBriefingsPage({ setPage }) {
+  const [firstName, setFirst] = useState("");
+  const [lastName, setLast] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  return (
+    <div className="page-form">
+      <div className="page-form-card">
+        <h1 className="page-form-title">Email Briefings</h1>
+        <p className="page-form-subtitle">
+          Get our daily news roundup delivered straight to your inbox.
+        </p>
+        <div className="page-form-row two-col">
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">First Name<span className="req">*</span></label>
+            <input className="page-form-input" value={firstName} onChange={(e) => setFirst(e.target.value)} />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Last Name<span className="req">*</span></label>
+            <input className="page-form-input" value={lastName} onChange={(e) => setLast(e.target.value)} />
+          </div>
+        </div>
+        <div className="page-form-row">
+          <label className="page-form-label">Address</label>
+          <input className="page-form-input" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Street, city, zip" />
+        </div>
+        <div className="page-form-row">
+          <label className="page-form-label">Email<span className="req">*</span></label>
+          <input type="email" className="page-form-input" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <p className="page-form-required-note">* required</p>
+        <button className="page-form-submit" disabled title="Backend coming — submission disabled in preview.">
+          Subscribe to Briefings
+        </button>
+        <p className="page-form-preview-note">Preview only — submission is disabled until the backend is wired up.</p>
+      </div>
+    </div>
+  );
+}
+
+function SignInPage({ setPage, onLogin }) {
+  const [usernameOrEmail, setUE] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const canSubmit = usernameOrEmail.trim().length > 0 && password.length > 0;
+
+  const handleSubmit = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    if (!canSubmit) return;
+    const user = tryClientLogin(usernameOrEmail, password);
+    if (user) {
+      setError("");
+      onLogin(user);
+    } else {
+      setError("Invalid credentials. Try again.");
+    }
+  };
+
+  return (
+    <div className="page-form">
+      <form className="page-form-card" onSubmit={handleSubmit}>
+        <h1 className="page-form-title">Sign In</h1>
+        <p className="page-form-subtitle">Welcome back to The South Shore Press.</p>
+        <div className="page-form-row">
+          <label className="page-form-label">Username or Email</label>
+          <input
+            className="page-form-input"
+            value={usernameOrEmail}
+            onChange={(e) => setUE(e.target.value)}
+            autoComplete="username"
+          />
+        </div>
+        <div className="page-form-row">
+          <label className="page-form-label">Password</label>
+          <input
+            type="password"
+            className="page-form-input"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+          />
+        </div>
+        {error && (
+          <div style={{ color: "var(--accent)", fontSize: 12.5, marginBottom: 10 }}>
+            {error}
+          </div>
+        )}
+        <button type="submit" className="page-form-submit" disabled={!canSubmit}>
+          Sign In
+        </button>
+        <div className="page-form-link-row">
+          <button type="button" className="page-form-link" onClick={() => setPage({ type: "create-account" })}>
+            Create Account →
+          </button>
+          <button type="button" className="page-form-link" onClick={() => setPage({ type: "forgot-password" })}>
+            Forgot Password?
+          </button>
+        </div>
+        <div style={{ textAlign: "center", fontSize: 11, color: "var(--text-muted)", marginTop: 16, lineHeight: 1.7 }}>
+          <div style={{ fontWeight: 600, color: "var(--text-secondary)" }}>Dev credentials (until backend lands):</div>
+          <div>Admin: admin@southshorepress.com / admin123</div>
+          <div>Editor: editor@southshorepress.com / editor123</div>
+          <div>Journalist: journalist@southshorepress.com / journalist123</div>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function CreateAccountPage({ setPage }) {
+  const [s, setS] = useState({
+    firstName: "", lastName: "", address: "", phone: "", email: "",
+    username: "", password: "", confirmPassword: "",
+    cardNumber: "", cardExp: "", cardCvc: "", cardZip: "",
+  });
+  const set = (k) => (e) => setS({ ...s, [k]: e.target.value });
+  return (
+    <div className="page-form page-form-wide">
+      <div className="page-form-card">
+        <h1 className="page-form-title">Create Account</h1>
+        <p className="page-form-subtitle">Set up your South Shore Press account.</p>
+
+        <div className="page-form-section-title">Your Info</div>
+        <div className="page-form-row two-col">
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">First Name<span className="req">*</span></label>
+            <input className="page-form-input" value={s.firstName} onChange={set("firstName")} />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Last Name<span className="req">*</span></label>
+            <input className="page-form-input" value={s.lastName} onChange={set("lastName")} />
+          </div>
+        </div>
+        <div className="page-form-row">
+          <label className="page-form-label">Address</label>
+          <input className="page-form-input" value={s.address} onChange={set("address")} placeholder="Street, city, state, zip" />
+        </div>
+        <div className="page-form-row two-col">
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Phone</label>
+            <input className="page-form-input" value={s.phone} onChange={set("phone")} />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Email<span className="req">*</span></label>
+            <input type="email" className="page-form-input" value={s.email} onChange={set("email")} />
+          </div>
+        </div>
+
+        <div className="page-form-section-divider" />
+        <div className="page-form-section-title">Login Credentials</div>
+        <div className="page-form-row">
+          <label className="page-form-label">Username</label>
+          <input className="page-form-input" value={s.username} onChange={set("username")} />
+        </div>
+        <div className="page-form-row two-col">
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Password</label>
+            <input type="password" className="page-form-input" value={s.password} onChange={set("password")} />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Confirm Password</label>
+            <input type="password" className="page-form-input" value={s.confirmPassword} onChange={set("confirmPassword")} />
+          </div>
+        </div>
+
+        <div className="page-form-section-divider" />
+        <div className="page-form-section-title">Payment Info (optional — required for paid subscriptions)</div>
+        <div className="page-form-row">
+          <label className="page-form-label">Card Number</label>
+          <input className="page-form-input" value={s.cardNumber} onChange={set("cardNumber")} placeholder="1234 5678 9012 3456" />
+        </div>
+        <div className="page-form-row three-col">
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Expiry (MM/YY)</label>
+            <input className="page-form-input" value={s.cardExp} onChange={set("cardExp")} placeholder="MM/YY" />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">CVC</label>
+            <input className="page-form-input" value={s.cardCvc} onChange={set("cardCvc")} placeholder="123" />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Billing ZIP</label>
+            <input className="page-form-input" value={s.cardZip} onChange={set("cardZip")} placeholder="11772" />
+          </div>
+        </div>
+
+        <p className="page-form-required-note">* required</p>
+        <button className="page-form-submit" disabled title="Backend coming — submission disabled in preview.">
+          Create Account
+        </button>
+        <p className="page-form-preview-note">Preview only — submission is disabled until the backend is wired up.</p>
+        <div className="page-form-link-row">
+          <button className="page-form-link" onClick={() => setPage({ type: "sign-in" })}>← Back to Sign In</button>
+          <span />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ForgotPasswordPage({ setPage }) {
+  const [email, setEmail] = useState("");
+  return (
+    <div className="page-form">
+      <div className="page-form-card">
+        <h1 className="page-form-title">Reset Password</h1>
+        <p className="page-form-subtitle">
+          Enter your account email and we'll send you a password reset link.
+        </p>
+        <div className="page-form-row">
+          <label className="page-form-label">Email<span className="req">*</span></label>
+          <input type="email" className="page-form-input" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <button className="page-form-submit" disabled title="Backend coming — submission disabled in preview.">
+          Send Reset Link
+        </button>
+        <p className="page-form-preview-note">Preview only — submission is disabled until the backend is wired up.</p>
+        <div className="page-form-link-row">
+          <button className="page-form-link" onClick={() => setPage({ type: "sign-in" })}>← Back to Sign In</button>
+          <span />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const SUBSCRIPTION_PLANS = [
+  { id: "monthly", name: "Monthly", price: 10, period: "per month", priceLabel: "$10", priceTotal: 10 },
+  { id: "annual",  name: "Annual",  price: 80, period: "per year",  priceLabel: "$80", priceTotal: 80, badge: "Best Value" },
+  { id: "all_in",  name: "All-In Package", price: 500, period: "one-time", priceLabel: "$500", priceTotal: 500 },
+];
+
+function SubscribeNowPage({ setPage }) {
+  const [selectedPlan, setSelectedPlan] = useState("annual");
+  const [s, setS] = useState({
+    cardName: "", cardNumber: "", cardExp: "", cardCvc: "", cardZip: "",
+  });
+  const set = (k) => (e) => setS({ ...s, [k]: e.target.value });
+  const plan = SUBSCRIPTION_PLANS.find((p) => p.id === selectedPlan);
+
+  return (
+    <div className="page-form page-form-wide">
+      <div className="page-form-card">
+        <h1 className="page-form-title">Subscribe to The South Shore Press</h1>
+        <p className="page-form-subtitle">Pick a plan that fits how often you read.</p>
+
+        <div className="page-form-section-title">Choose Your Plan</div>
+        <div className="subscribe-plans">
+          {SUBSCRIPTION_PLANS.map((p) => (
+            <div
+              key={p.id}
+              className={`subscribe-plan-card ${selectedPlan === p.id ? "selected" : ""}`}
+              onClick={() => setSelectedPlan(p.id)}
+            >
+              <div className="subscribe-plan-name">{p.name}</div>
+              <div className="subscribe-plan-price">{p.priceLabel}</div>
+              <div className="subscribe-plan-period">{p.period}</div>
+              {p.badge && <div className="subscribe-plan-badge">{p.badge}</div>}
+            </div>
+          ))}
+        </div>
+        <p className="subscribe-disclaimer">
+          Subscriptions auto-renew at the end of each billing period unless you cancel from your account settings.
+          You can cancel anytime; cancellation takes effect at the end of the current period.
+        </p>
+
+        <div className="page-form-section-divider" />
+        <div className="page-form-section-title">Payment</div>
+        <div className="page-form-row">
+          <label className="page-form-label">Cardholder Name</label>
+          <input className="page-form-input" value={s.cardName} onChange={set("cardName")} placeholder="As it appears on the card" />
+        </div>
+        <div className="page-form-row">
+          <label className="page-form-label">Card Number</label>
+          <input className="page-form-input" value={s.cardNumber} onChange={set("cardNumber")} placeholder="1234 5678 9012 3456" />
+        </div>
+        <div className="page-form-row three-col">
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Expiry (MM/YY)</label>
+            <input className="page-form-input" value={s.cardExp} onChange={set("cardExp")} placeholder="MM/YY" />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">CVC</label>
+            <input className="page-form-input" value={s.cardCvc} onChange={set("cardCvc")} placeholder="123" />
+          </div>
+          <div className="page-form-row" style={{ marginBottom: 0 }}>
+            <label className="page-form-label">Billing ZIP</label>
+            <input className="page-form-input" value={s.cardZip} onChange={set("cardZip")} placeholder="11772" />
+          </div>
+        </div>
+
+        <div className="subscribe-total">
+          <span className="subscribe-total-label">Total</span>
+          <span className="subscribe-total-amount">${plan.priceTotal}.00</span>
+        </div>
+        <button className="page-form-submit" disabled title="Backend + payments not yet wired.">
+          Pay Now — ${plan.priceTotal}.00
+        </button>
+        <p className="page-form-preview-note">Preview only — Continue / Pay Now is disabled until payments are wired.</p>
+      </div>
+    </div>
+  );
+}
+
 // ─── App ─────────────────────────────────────────────────────────────────────
 export default function App() {
   const [page, setPage] = useState({ type: "home" });
@@ -2940,13 +3601,9 @@ export default function App() {
         currentPage={page}
         setPage={navigate}
         user={user}
-        setModal={(m) => {
-          if (m === "logout") {
-            setUser(null);
-            navigate({ type: "home" });
-          } else {
-            setModal(m);
-          }
+        onSignOut={() => {
+          setUser(null);
+          navigate({ type: "home" });
         }}
       />
       <main>
@@ -2957,6 +3614,19 @@ export default function App() {
         {page.type === "story" && (
           <StoryPage storyId={page.id} setPage={navigate} />
         )}
+        {page.type === "email-briefings" && <EmailBriefingsPage setPage={navigate} />}
+        {page.type === "sign-in" && (
+          <SignInPage
+            setPage={navigate}
+            onLogin={(u) => {
+              setUser(u);
+              navigate(landingPageForRole(u.role));
+            }}
+          />
+        )}
+        {page.type === "create-account" && <CreateAccountPage setPage={navigate} />}
+        {page.type === "forgot-password" && <ForgotPasswordPage setPage={navigate} />}
+        {page.type === "subscribe" && <SubscribeNowPage setPage={navigate} />}
         {page.type === "journalist" && (user?.role === "journalist" || user?.role === "admin") && (
           <JournalistPage setPage={navigate} />
         )}
