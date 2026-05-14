@@ -344,7 +344,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .header-logo-large {
-  max-height: 290px;
+  max-height: 130px;
   width: auto;
   object-fit: contain;
   cursor: pointer;
