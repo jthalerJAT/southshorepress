@@ -2593,32 +2593,39 @@ function JournalistPage({ setPage, user }) {
     if (!selectedTags.length) { setSubmitError("Select at least one section tag."); return; }
     if (!user?.id) { setSubmitError("You must be signed in to submit a story."); return; }
     setSubmitting(true);
+    const payload = {
+      headline: headline.trim(),
+      subline: subline.trim() || null,
+      byline: byline.trim() || user.name || null,
+      body: storyText,
+      hero_photo_url: heroPhoto.trim() || null,
+      extra_photo_urls: extraPhotos.filter(Boolean),
+      categories: selectedTags,
+      status: "published",
+      published_at: new Date().toISOString(),
+      author_id: user.id,
+    };
+    console.log("[SubmitStory] starting insert", { payload, userId: user.id });
     try {
-      const { data, error } = await supabase
-        .from("stories")
-        .insert({
-          headline: headline.trim(),
-          subline: subline.trim() || null,
-          byline: byline.trim() || user.name || null,
-          body: storyText,
-          hero_photo_url: heroPhoto.trim() || null,
-          extra_photo_urls: extraPhotos.filter(Boolean),
-          categories: selectedTags,
-          status: "published",
-          published_at: new Date().toISOString(),
-          author_id: user.id,
-        })
-        .select()
-        .single();
+      const insertCall = supabase.from("stories").insert(payload).select();
+      const timeout = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Timed out after 15s. Check DevTools → Network for the failing request.")),
+          15000
+        )
+      );
+      const { data, error } = await Promise.race([insertCall, timeout]);
+      console.log("[SubmitStory] result", { data, error });
       if (error) throw error;
-      setSubmitSuccess(`Published: "${data.headline}"`);
-      // Reset form
+      const newStory = Array.isArray(data) ? data[0] : data;
+      setSubmitSuccess(`Published: "${newStory?.headline || headline}"`);
       setHeadline(""); setSubline(""); setByline(""); setStoryText("");
       setHeroPhoto(""); setExtraPhotos([]); setSelectedTags([]);
       setAiResult("");
       await refreshStories();
     } catch (err) {
-      setSubmitError(err.message || "Failed to submit story.");
+      console.error("[SubmitStory] failed", err);
+      setSubmitError(err.message || String(err) || "Failed to submit story.");
     } finally {
       setSubmitting(false);
     }
