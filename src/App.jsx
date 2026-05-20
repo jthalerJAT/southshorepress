@@ -3478,27 +3478,43 @@ function SignInPage({ setPage, onLogin }) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const canSubmit =
-    usernameOrEmail.trim().length > 0 && password.length > 0 && !submitting;
-
   const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
-    if (!canSubmit) return;
+    console.log("[SignIn] button clicked", {
+      hasEmail: usernameOrEmail.trim().length > 0,
+      hasPassword: password.length > 0,
+      submitting,
+    });
+    if (submitting) return;
+    const email = usernameOrEmail.trim().toLowerCase();
+    if (!email || !password) {
+      setError("Email and password are required.");
+      return;
+    }
     setSubmitting(true);
     setError("");
     try {
-      const email = usernameOrEmail.trim().toLowerCase();
-      const { data, error: authErr } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      console.log("[SignIn] calling supabase.auth.signInWithPassword");
+      const signInCall = supabase.auth.signInWithPassword({ email, password });
+      const timeout = new Promise((_, reject) =>
+        setTimeout(
+          () => reject(new Error("Sign-in timed out after 15s — Supabase didn't respond.")),
+          15000
+        )
+      );
+      const { data, error: authErr } = await Promise.race([signInCall, timeout]);
+      console.log("[SignIn] auth result", { hasUser: !!data?.user, authErr });
       if (authErr) throw authErr;
+
+      console.log("[SignIn] fetching profile");
       const { data: profile, error: pErr } = await supabase
         .from("profiles")
         .select("email, display_name, role")
         .eq("id", data.user.id)
         .single();
+      console.log("[SignIn] profile result", { profile, pErr });
       if (pErr) throw pErr;
+
       const dbRole = profile.role;
       const frontendRole =
         dbRole === "master_admin" || dbRole === "admin"
@@ -3515,7 +3531,8 @@ function SignInPage({ setPage, onLogin }) {
         isAdmin: frontendRole === "admin",
       });
     } catch (err) {
-      setError(err.message || "Sign-in failed. Check your email and password.");
+      console.error("[SignIn] failed", err);
+      setError(err.message || String(err) || "Sign-in failed.");
     } finally {
       setSubmitting(false);
     }
@@ -3550,8 +3567,8 @@ function SignInPage({ setPage, onLogin }) {
             {error}
           </div>
         )}
-        <button type="submit" className="page-form-submit" disabled={!canSubmit}>
-          Sign In
+        <button type="submit" className="page-form-submit" disabled={submitting}>
+          {submitting ? "Signing in…" : "Sign In"}
         </button>
         <div className="page-form-link-row">
           <button type="button" className="page-form-link" onClick={() => setPage({ type: "create-account" })}>
