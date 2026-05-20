@@ -14,5 +14,11 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
+    // No-op lock: bypass navigator.locks-based cross-tab sync because it
+    // can deadlock on stale lock state from a crashed/orphaned tab,
+    // causing every auth call (and any REST call that triggers a token
+    // refresh) to hang forever. We accept the trade-off that two tabs
+    // signing in/out simultaneously could race.
+    lock: async (_name, _timeoutMs, fn) => await fn(),
   },
 });
