@@ -153,6 +153,7 @@ function generateStories() {
       stories.push({
         id: id++,
         category: cat.id,
+        categories: [cat.id],
         categoryLabel: cat.label,
         headline,
         excerpt:
@@ -2381,7 +2382,8 @@ function StoryRow({ title, stories, setPage }) {
 function HomePage({ setPage }) {
   const { stories: ALL_STORIES } = useStories();
   const otherNews = [...ALL_STORIES].sort((a, b) => b.views - a.views).slice(0, 8);
-  const storiesFor = (id) => ALL_STORIES.filter((s) => s.category === id);
+  const storiesFor = (id) =>
+    ALL_STORIES.filter((s) => (s.categories || [s.category]).includes(id));
 
   return (
     <>
@@ -2462,9 +2464,9 @@ function CategorySidebar({ setPage }) {
 function CategoryPage({ categoryId, setPage }) {
   const { stories: ALL_STORIES } = useStories();
   const cat = CATEGORIES.find((c) => c.id === categoryId);
-  const stories = ALL_STORIES.filter((s) => s.category === categoryId).sort(
-    (a, b) => b.dateObj - a.dateObj
-  );
+  const stories = ALL_STORIES.filter((s) =>
+    (s.categories || [s.category]).includes(categoryId)
+  ).sort((a, b) => b.dateObj - a.dateObj);
 
   return (
     <div className="category-page">
@@ -3038,7 +3040,7 @@ function EditorPage({ setPage }) {
   const getStoryForSlot = (tab, slotName) => {
     const catId = tab === "home" ? null : tab;
     const pool = catId
-      ? ALL_STORIES.filter((s) => s.category === catId)
+      ? ALL_STORIES.filter((s) => (s.categories || [s.category]).includes(catId))
       : ALL_STORIES;
     const idx = slotName.charCodeAt(slotName.length - 1) % pool.length;
     return pool[idx] || pool[0];
