@@ -3864,9 +3864,22 @@ export default function App() {
   const navigate = useCallback((p) => { setPage(p); window.scrollTo(0, 0); }, []);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
+    // Clear UI state first so sign-out is instant regardless of network.
     setUser(null);
     navigate({ type: "home" });
+    // Local scope skips the server-side "logout everywhere" roundtrip and
+    // just clears the locally-stored session. Wrapped in a timeout so a
+    // hung request never blocks the UI.
+    try {
+      await Promise.race([
+        supabase.auth.signOut({ scope: "local" }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("signOut timeout")), 5000)
+        ),
+      ]);
+    } catch (err) {
+      console.warn("[SignOut] background call failed (UI already cleared):", err.message);
+    }
   };
 
   return (
