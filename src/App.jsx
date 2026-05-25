@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef, createContext, useContext, us
 import {
   insertStory,
   updateStory,
+  deleteStory,
   fetchAllStories,
   fetchMyDrafts,
   fetchPublishedStories,
@@ -1385,6 +1386,23 @@ main { padding-top: 8px; }
 }
 .jp-btn-warn:hover:not(:disabled) { background: rgba(234,88,12,0.32); }
 .jp-btn-warn:disabled { opacity: 0.5; cursor: wait; }
+
+/* Delete Story — distinct red palette so it's visually separate from the */
+/* orange "Unpublish" (reversible). Click → native confirm before any DB hit. */
+.jp-btn-danger {
+  background: rgba(220,38,38,0.18);
+  border: 1px solid #dc2626;
+  color: #fecaca;
+  cursor: pointer;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+  margin-left: auto;
+}
+.jp-btn-danger:hover:not(:disabled) { background: rgba(220,38,38,0.34); }
+.jp-btn-danger:disabled { opacity: 0.5; cursor: wait; }
 
 .btn-small {
   padding: 6px 14px;
@@ -2999,6 +3017,31 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
     }
   };
 
+  // Hard-delete the story from the database. Editor-only, only on an
+  // existing row. Native confirm() keeps the dialog consistent with the
+  // rest of the site and avoids a custom modal for this rare action.
+  const performDelete = async () => {
+    if (!isEditor || !editingStory?.id || submitting) return;
+    const ok = window.confirm(
+      `Are you sure you want to delete this story?\n\n"${editingStory.headline}"\n\nThis cannot be undone.`
+    );
+    if (!ok) return;
+    setSubmitting(true);
+    setSubmitError("");
+    setSubmitSuccess("");
+    try {
+      await deleteStory(editingStory.id);
+      await refreshStories();
+      setSubmitSuccess(`Deleted: "${editingStory.headline}"`);
+      setTimeout(() => backToList(), 800);
+    } catch (err) {
+      console.error("[DeleteStory] failed", err);
+      setSubmitError(err.message || String(err) || "Failed to delete story.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const toggleTag = (id) =>
     setSelectedTags((prev) =>
       prev.includes(id) ? prev.filter((t) => t !== id) : [...prev, id]
@@ -3343,6 +3386,19 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
               disabled={submitting}
             >
               {submitting ? "Submitting…" : "Submit Story"}
+            </button>
+          )}
+          {/* Delete Story — editor-only, existing rows only. Positioned last
+              so the destructive action sits visually apart from the
+              workflow buttons; native confirm prevents accidental clicks. */}
+          {isEditor && editingStory?.id && (
+            <button
+              className="jp-btn jp-btn-danger"
+              onClick={performDelete}
+              disabled={submitting}
+              title="Permanently remove this story from the database. This cannot be undone."
+            >
+              Delete Story
             </button>
           )}
         </div>

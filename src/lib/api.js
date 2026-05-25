@@ -184,6 +184,17 @@ export async function updateStory(id, payload) {
   return Array.isArray(data) ? data[0] : data;
 }
 
+// Hard-delete a story by id. Used by the editor portal's Delete Story
+// button — irreversible, intended for test/old rows that shouldn't even
+// stay in the database. (Use updateStory({status:'unpublished'}) for the
+// soft-remove case.)
+export async function deleteStory(id) {
+  await restFetch(
+    `/rest/v1/stories?id=eq.${encodeURIComponent(id)}`,
+    { method: "DELETE" }
+  );
+}
+
 // Common select clause used by the editor's all-stories table + drafts list.
 // (fetchPublishedStories has its own copy with the same shape — keeping the
 // two in sync deliberately; if columns ever drift, update both.)
