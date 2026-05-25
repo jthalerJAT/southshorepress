@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useRef, createContext, useContext, useMemo } from "react";
 import {
   insertStory,
+  updateStory,
+  fetchAllStories,
+  fetchMyDrafts,
   fetchPublishedStories,
   signInWithPassword,
   signOut as apiSignOut,
@@ -1265,6 +1268,123 @@ main { padding-top: 8px; }
 
 .status-published { background: rgba(34,197,94,0.15); color: #22c55e; }
 .status-draft { background: rgba(250,204,21,0.15); color: #facc15; }
+.status-submitted { background: rgba(59,130,246,0.15); color: #3b82f6; }
+.status-unpublished { background: rgba(120,120,120,0.18); color: #9ca3af; }
+
+/* ─── Stories table (shared: journalist drafts + editor edit-stories) ─── */
+.stories-table-wrap {
+  background: var(--bg-card, #1a1a1a);
+  border: 1px solid var(--border-subtle, #2a2a2a);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 12px;
+}
+.stories-table-search {
+  display: block;
+  width: calc(100% - 32px);
+  margin: 14px 16px;
+  padding: 9px 12px;
+  font-size: 13px;
+  background: var(--bg-input, #2a2a2a);
+  border: 1px solid var(--border-subtle, #3a3a3a);
+  border-radius: 6px;
+  color: var(--text, #e5e5e5);
+}
+.stories-table-search:focus {
+  outline: none;
+  border-color: var(--accent, #c8102e);
+}
+.stories-table-scroll {
+  overflow-x: auto;
+}
+.stories-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.stories-table-th {
+  padding: 10px 14px;
+  text-align: left;
+  background: var(--bg-hover, #232323);
+  color: var(--text-muted, #9a9a9a);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border-subtle, #2a2a2a);
+}
+.stories-table-th:hover { color: var(--text, #e5e5e5); }
+.stories-table-th.active { color: var(--accent, #c8102e); }
+.stories-table-sort {
+  display: inline-block;
+  width: 12px;
+  margin-left: 4px;
+  font-size: 10px;
+  color: var(--accent, #c8102e);
+}
+.stories-table-row {
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.stories-table-row:hover { background: var(--bg-hover, #232323); }
+.stories-table-td {
+  padding: 11px 14px;
+  color: var(--text, #e5e5e5);
+  border-bottom: 1px solid var(--border-subtle, #2a2a2a);
+  vertical-align: middle;
+}
+.stories-table-row:last-child .stories-table-td { border-bottom: none; }
+
+/* ─── JournalistPage drafts list + edit-mode helpers ─── */
+.jp-drafts-block { margin-top: 6px; }
+.jp-drafts-empty {
+  padding: 18px;
+  text-align: center;
+  color: var(--text-muted, #9a9a9a);
+  font-size: 13px;
+  background: var(--bg-card, #1a1a1a);
+  border: 1px dashed var(--border-subtle, #3a3a3a);
+  border-radius: 8px;
+  margin-top: 10px;
+}
+.jp-back-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted, #9a9a9a);
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+.jp-back-btn:hover { color: var(--text, #e5e5e5); }
+.jp-edit-banner {
+  margin: 8px 0 12px;
+  padding: 8px 12px;
+  background: var(--bg-hover, #232323);
+  border-left: 3px solid var(--accent, #c8102e);
+  border-radius: 4px;
+  font-size: 12px;
+  color: var(--text-muted, #c0c0c0);
+}
+.jp-edit-banner strong { color: var(--text, #fff); margin-right: 8px; }
+
+/* Unpublish button — distinct from primary/secondary, signals a destructive */
+/* (but reversible) action without being alarming. */
+.jp-btn-warn {
+  background: rgba(234,88,12,0.18);
+  border: 1px solid #ea580c;
+  color: #fed7aa;
+  cursor: pointer;
+  padding: 9px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.15s;
+}
+.jp-btn-warn:hover:not(:disabled) { background: rgba(234,88,12,0.32); }
+.jp-btn-warn:disabled { opacity: 0.5; cursor: wait; }
 
 .btn-small {
   padding: 6px 14px;
@@ -2196,7 +2316,7 @@ function Header({ currentPage, setPage, user, onSignOut }) {
           </button>
           {user ? (
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              {isStaff && (user.role === "journalist" || user.role === "admin") && (
+              {isStaff && (user.role === "journalist" || user.role === "editor" || user.role === "admin") && (
                 <button
                   className="header-link-briefing"
                   onClick={() => setPage({ type: "journalist" })}
@@ -2575,17 +2695,201 @@ function StoryPage({ storyId, setPage }) {
   );
 }
 
+// ─── Shared story-list bits (StatusBadge + StoriesTable) ────────────────────
+// Used by both the journalist's "My Drafts" list and the editor's "Edit
+// Stories" tab. Data-driven over a COLUMN_DEFS map so each consumer just
+// picks the columns it cares about.
+
+function StatusBadge({ status }) {
+  const safe = (status || "draft").toLowerCase();
+  return <span className={`status-badge status-${safe}`}>{safe.toUpperCase()}</span>;
+}
+
+function fmtStoryDate(iso) {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  } catch { return "—"; }
+}
+function fmtStoryTime(iso) {
+  if (!iso) return "—";
+  try {
+    return new Date(iso).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+  } catch { return "—"; }
+}
+function storyDateSource(r) {
+  // Prefer published_at when present (= the posting time); fall back to
+  // created_at for drafts / submitted that have never been published.
+  return r.published_at || r.created_at;
+}
+
+const COLUMN_DEFS = {
+  date: {
+    label: "Date",
+    accessor: (r) => fmtStoryDate(storyDateSource(r)),
+    sortKey: (r) => new Date(storyDateSource(r) || 0).getTime() || 0,
+    searchable: (r) => fmtStoryDate(storyDateSource(r)),
+  },
+  time: {
+    label: "Time",
+    accessor: (r) => fmtStoryTime(storyDateSource(r)),
+    sortKey: (r) => new Date(storyDateSource(r) || 0).getTime() || 0,
+    searchable: () => "",
+  },
+  title: {
+    label: "Title",
+    accessor: (r) => r.headline || "(untitled)",
+    sortKey: (r) => (r.headline || "").toLowerCase(),
+    searchable: (r) => r.headline || "",
+  },
+  byline: {
+    label: "Byline",
+    accessor: (r) => r.byline || r.author?.display_name || "—",
+    sortKey: (r) => (r.byline || r.author?.display_name || "").toLowerCase(),
+    searchable: (r) => `${r.byline || ""} ${r.author?.display_name || ""}`,
+  },
+  sections: {
+    label: "Section(s)",
+    accessor: (r) => (r.categories || []).join(", ") || "—",
+    sortKey: (r) => (r.categories || []).join(",").toLowerCase(),
+    searchable: (r) => (r.categories || []).join(" "),
+  },
+  status: {
+    label: "Status",
+    accessor: (r) => <StatusBadge status={r.status} />,
+    sortKey: (r) => (r.status || "").toLowerCase(),
+    searchable: (r) => r.status || "",
+  },
+};
+
+function StoriesTable({ rows, columns, onRowClick, defaultSort, searchable = false }) {
+  const [sortKey, setSortKey] = useState(defaultSort?.key || columns[0]);
+  const [sortDir, setSortDir] = useState(defaultSort?.direction || "desc");
+  const [search, setSearch] = useState("");
+
+  const handleHeaderClick = (key) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortKey(key);
+      setSortDir("asc");
+    }
+  };
+
+  const filtered = useMemo(() => {
+    if (!searchable || !search.trim()) return rows;
+    const tokens = search.toLowerCase().split(/\s+/).filter(Boolean);
+    return rows.filter((r) => {
+      const hay = columns
+        .map((c) => COLUMN_DEFS[c]?.searchable?.(r) || "")
+        .join(" ")
+        .toLowerCase();
+      return tokens.every((t) => hay.includes(t));
+    });
+  }, [rows, columns, search, searchable]);
+
+  const sorted = useMemo(() => {
+    const def = COLUMN_DEFS[sortKey];
+    if (!def) return filtered;
+    const out = [...filtered].sort((a, b) => {
+      const av = def.sortKey(a);
+      const bv = def.sortKey(b);
+      if (av < bv) return -1;
+      if (av > bv) return 1;
+      return 0;
+    });
+    return sortDir === "desc" ? out.reverse() : out;
+  }, [filtered, sortKey, sortDir]);
+
+  return (
+    <div className="stories-table-wrap">
+      {searchable && (
+        <input
+          className="stories-table-search"
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search by headline, byline, section, status…"
+        />
+      )}
+      <div className="stories-table-scroll">
+        <table className="stories-table">
+          <thead>
+            <tr>
+              {columns.map((c) => {
+                const def = COLUMN_DEFS[c];
+                const active = sortKey === c;
+                return (
+                  <th
+                    key={c}
+                    className={`stories-table-th${active ? " active" : ""}`}
+                    onClick={() => handleHeaderClick(c)}
+                  >
+                    <span>{def?.label || c}</span>
+                    <span className="stories-table-sort">
+                      {active ? (sortDir === "asc" ? "▲" : "▼") : ""}
+                    </span>
+                  </th>
+                );
+              })}
+            </tr>
+          </thead>
+          <tbody>
+            {sorted.map((r) => (
+              <tr
+                key={r.id}
+                className="stories-table-row"
+                onClick={() => onRowClick?.(r)}
+              >
+                {columns.map((c) => (
+                  <td key={c} className="stories-table-td">
+                    {COLUMN_DEFS[c]?.accessor(r) ?? "—"}
+                  </td>
+                ))}
+              </tr>
+            ))}
+            {sorted.length === 0 && (
+              <tr>
+                <td
+                  colSpan={columns.length}
+                  style={{ textAlign: "center", padding: 24, color: "var(--text-muted)", fontSize: 13 }}
+                >
+                  {search ? "No stories match your search." : "No stories yet."}
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 // ─── Journalist Page ─────────────────────────────────────────────────────────
 
-function JournalistPage({ setPage, user }) {
+function JournalistPage({ setPage, user, embeddedStory = null, onClose = null }) {
   const { refresh: refreshStories } = useStories();
-  const [headline, setHeadline] = useState("");
-  const [subline, setSubline] = useState("");
-  const [byline, setByline] = useState("");
-  const [storyText, setStoryText] = useState("");
-  const [heroPhoto, setHeroPhoto] = useState("");
-  const [extraPhotos, setExtraPhotos] = useState([]);
-  const [selectedTags, setSelectedTags] = useState([]);
+  const isEmbedded = !!embeddedStory;
+  const isEditor = user?.role === "editor" || user?.role === "admin";
+
+  // Top-level view: "list" (drafts table + New Story button) or "form" (the
+  // editor). When embedded (e.g. inside the Editor Portal's Edit Stories tab)
+  // we skip the list entirely — the parent already picked the story.
+  const [view, setView] = useState(isEmbedded ? "form" : "list");
+  const [editingStory, setEditingStory] = useState(embeddedStory);
+
+  // My-drafts list (loaded only when standalone + in list view).
+  const [myDrafts, setMyDrafts] = useState([]);
+  const [draftsLoading, setDraftsLoading] = useState(false);
+
+  // Form fields — initial values come from embeddedStory if present.
+  const [headline, setHeadline] = useState(embeddedStory?.headline || "");
+  const [subline, setSubline] = useState(embeddedStory?.subline || "");
+  const [byline, setByline] = useState(embeddedStory?.byline || "");
+  const [storyText, setStoryText] = useState(embeddedStory?.body || "");
+  const [heroPhoto, setHeroPhoto] = useState(embeddedStory?.hero_photo_url || "");
+  const [extraPhotos, setExtraPhotos] = useState(embeddedStory?.extra_photo_urls || []);
+  const [selectedTags, setSelectedTags] = useState(embeddedStory?.categories || []);
   const [showPreview, setShowPreview] = useState(false);
   const [aiResult, setAiResult] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
@@ -2594,16 +2898,67 @@ function JournalistPage({ setPage, user }) {
   const [submitError, setSubmitError] = useState("");
   const [submitSuccess, setSubmitSuccess] = useState("");
 
-  const handleSubmit = async () => {
+  const loadFormFromStory = (story) => {
+    setHeadline(story?.headline || "");
+    setSubline(story?.subline || "");
+    setByline(story?.byline || "");
+    setStoryText(story?.body || "");
+    setHeroPhoto(story?.hero_photo_url || "");
+    setExtraPhotos(story?.extra_photo_urls || []);
+    setSelectedTags(story?.categories || []);
+    setSubmitError("");
+    setSubmitSuccess("");
+    setAiResult("");
+  };
+
+  const enterNewStory = () => {
+    setEditingStory(null);
+    loadFormFromStory(null);
+    setView("form");
+  };
+  const enterEditStory = (story) => {
+    setEditingStory(story);
+    loadFormFromStory(story);
+    setView("form");
+  };
+  const backToList = () => {
+    if (isEmbedded && onClose) { onClose(); return; }
+    setEditingStory(null);
+    loadFormFromStory(null);
+    setView("list");
+  };
+
+  const loadDrafts = useCallback(async () => {
+    if (!user?.id) return;
+    setDraftsLoading(true);
+    try {
+      const rows = await fetchMyDrafts(user.id);
+      setMyDrafts(Array.isArray(rows) ? rows : []);
+    } catch (err) {
+      console.warn("[Drafts] load failed:", err.message);
+    } finally {
+      setDraftsLoading(false);
+    }
+  }, [user?.id]);
+
+  useEffect(() => {
+    if (!isEmbedded && view === "list") loadDrafts();
+  }, [isEmbedded, view, loadDrafts]);
+
+  // Single save handler — newStatus drives both the persisted status and the
+  // button that was clicked. insertStory for net-new rows, updateStory for
+  // anything with an id (drafts being promoted, submitted being published,
+  // published being unpublished, etc.).
+  const performSave = async (newStatus) => {
     if (submitting) return;
     setSubmitError("");
     setSubmitSuccess("");
     if (!headline.trim()) { setSubmitError("Headline is required."); return; }
     if (!storyText.trim()) { setSubmitError("Story body is required."); return; }
     if (!selectedTags.length) { setSubmitError("Select at least one section tag."); return; }
-    if (!user?.id) { setSubmitError("You must be signed in to submit a story."); return; }
+    if (!user?.id) { setSubmitError("You must be signed in to save a story."); return; }
     setSubmitting(true);
-    const payload = {
+    const basePayload = {
       headline: headline.trim(),
       subline: subline.trim() || null,
       byline: byline.trim() || user.name || null,
@@ -2611,27 +2966,34 @@ function JournalistPage({ setPage, user }) {
       hero_photo_url: heroPhoto.trim() || null,
       extra_photo_urls: extraPhotos.filter(Boolean),
       categories: selectedTags,
-      status: "published",
-      published_at: new Date().toISOString(),
-      author_id: user.id,
+      status: newStatus,
     };
-    console.log("[SubmitStory] starting insert (raw REST)", { headline });
+    // Stamp published_at only on the FIRST publish — subsequent unpublish /
+    // republish preserves the original posting time.
+    const isFirstPublish =
+      newStatus === "published" &&
+      (!editingStory || editingStory.status !== "published");
+    if (isFirstPublish) basePayload.published_at = new Date().toISOString();
+
     try {
-      const newStory = await Promise.race([
-        insertStory(payload),
-        new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Timed out after 15s. Check DevTools → Network.")), 15000)
-        ),
-      ]);
-      console.log("[SubmitStory] inserted", newStory);
-      setSubmitSuccess(`Published: "${newStory?.headline || headline}"`);
-      setHeadline(""); setSubline(""); setByline(""); setStoryText("");
-      setHeroPhoto(""); setExtraPhotos([]); setSelectedTags([]);
-      setAiResult("");
+      const result = editingStory?.id
+        ? await updateStory(editingStory.id, basePayload)
+        : await insertStory({ ...basePayload, author_id: user.id });
+      const title = result?.headline || headline;
+      const verb = {
+        draft: "Saved as draft",
+        submitted: "Submitted for review",
+        published: "Published",
+        unpublished: "Unpublished",
+      }[newStatus] || "Saved";
+      setSubmitSuccess(`${verb}: "${title}"`);
       await refreshStories();
+      // Return to list so the author sees the new state. Slight delay so the
+      // success flash is readable.
+      setTimeout(() => backToList(), 800);
     } catch (err) {
-      console.error("[SubmitStory] failed", err);
-      setSubmitError(err.message || String(err) || "Failed to submit story.");
+      console.error("[SaveStory] failed", err);
+      setSubmitError(err.message || String(err) || "Failed to save story.");
     } finally {
       setSubmitting(false);
     }
@@ -2764,10 +3126,62 @@ function JournalistPage({ setPage, user }) {
     return result;
   };
 
+  // ─── List view: drafts + Start New Story ────────────────────────────────
+  // Skipped when embedded — parent already picked a story for us to edit.
+  if (view === "list" && !isEmbedded) {
+    return (
+      <div className="journalist-page no-preview">
+        <div className="jp-editor">
+          <h1>Story Editor</h1>
+          <button
+            className="jp-btn jp-btn-primary"
+            style={{ fontSize: 14 }}
+            onClick={enterNewStory}
+          >
+            + Start New Story
+          </button>
+          <div className="jp-drafts-block">
+            <div className="jp-section-label" style={{ marginTop: 18 }}>
+              My Drafts
+            </div>
+            {draftsLoading ? (
+              <div className="jp-drafts-empty">Loading…</div>
+            ) : myDrafts.length === 0 ? (
+              <div className="jp-drafts-empty">
+                No drafts yet. Click <strong>+ Start New Story</strong> above to begin one.
+              </div>
+            ) : (
+              <StoriesTable
+                rows={myDrafts}
+                columns={["date", "time", "byline", "title", "status"]}
+                onRowClick={enterEditStory}
+                defaultSort={{ key: "date", direction: "desc" }}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ─── Form view: editor (new story or editing existing) ──────────────────
   return (
     <div className={`journalist-page ${!showPreview ? "no-preview" : ""}`}>
       <div className="jp-editor">
-        <h1>Story Editor</h1>
+        <button
+          className="jp-back-btn"
+          onClick={backToList}
+          style={{ marginBottom: 10 }}
+        >
+          ← Back to {isEmbedded ? "stories list" : "my drafts"}
+        </button>
+        <h1>{editingStory ? "Edit Story" : "New Story"}</h1>
+        {editingStory && (
+          <div className="jp-edit-banner">
+            Editing <strong>{editingStory.headline}</strong>{" "}
+            <StatusBadge status={editingStory.status} />
+          </div>
+        )}
 
         {/* Headline */}
         <div>
@@ -2866,7 +3280,7 @@ function JournalistPage({ setPage, user }) {
           </div>
         </div>
 
-        {/* Actions */}
+        {/* Actions — role-aware save buttons + AI/Preview helpers */}
         <div className="jp-actions">
           <button
             className="jp-btn jp-btn-ai"
@@ -2881,13 +3295,54 @@ function JournalistPage({ setPage, user }) {
           >
             {showPreview ? "Hide Preview" : "👁 Preview"}
           </button>
+          {/* Save Draft — always available */}
           <button
-            className="jp-btn jp-btn-primary"
-            onClick={handleSubmit}
+            className="jp-btn jp-btn-secondary"
+            onClick={() => performSave("draft")}
             disabled={submitting}
           >
-            {submitting ? "Publishing…" : "Submit Story"}
+            {submitting ? "Saving…" : "Save Draft"}
           </button>
+          {isEditor ? (
+            <>
+              <button
+                className="jp-btn jp-btn-primary"
+                onClick={() => performSave("published")}
+                disabled={submitting}
+              >
+                {submitting ? "Publishing…" : "Publish Story"}
+              </button>
+              {editingStory?.status === "published" && (
+                <button
+                  className="jp-btn jp-btn-warn"
+                  onClick={() => performSave("unpublished")}
+                  disabled={submitting}
+                >
+                  Unpublish
+                </button>
+              )}
+              {(editingStory?.status === "submitted" ||
+                editingStory?.status === "published" ||
+                editingStory?.status === "unpublished") && (
+                <button
+                  className="jp-btn jp-btn-secondary"
+                  onClick={() => performSave("draft")}
+                  disabled={submitting}
+                  title="Send back to the journalist for revisions"
+                >
+                  Downgrade to Draft
+                </button>
+              )}
+            </>
+          ) : (
+            <button
+              className="jp-btn jp-btn-primary"
+              onClick={() => performSave("submitted")}
+              disabled={submitting}
+            >
+              {submitting ? "Submitting…" : "Submit Story"}
+            </button>
+          )}
         </div>
 
         {(submitError || submitSuccess) && (
@@ -3005,15 +3460,52 @@ const HOME_SLOTS = [
   { group: "Section Rows", items: ["Video Vault Row", "Sports Row", "Local Row", "National Row", "Other News Row", "Opinion Row"] },
 ];
 
-function EditorPage({ setPage }) {
-  const { stories: ALL_STORIES } = useStories();
-  const [view, setView] = useState("home"); // home | credentials | layout
+function EditorPage({ setPage, user }) {
+  const { stories: ALL_STORIES, refresh: refreshStories } = useStories();
+  const [view, setView] = useState("home");
+  // ^ home | credentials | layout | edit-stories | editing-story
   const [credentials, setCredentials] = useState(INITIAL_CREDENTIALS);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [addingTo, setAddingTo] = useState(null); // role string
   const [newPerson, setNewPerson] = useState({ name: "", email: "", phone: "" });
   const [layoutTab, setLayoutTab] = useState("home");
   const [previewStory, setPreviewStory] = useState(null);
+
+  // ─── Edit Stories tab state ───────────────────────────────────────────────
+  const [allStories, setAllStories] = useState([]);
+  const [allStoriesLoading, setAllStoriesLoading] = useState(false);
+  const [allStoriesError, setAllStoriesError] = useState("");
+  const [editingStory, setEditingStory] = useState(null); // selected for edit
+
+  const loadAllStories = useCallback(async () => {
+    setAllStoriesLoading(true);
+    setAllStoriesError("");
+    try {
+      const rows = await fetchAllStories();
+      setAllStories(Array.isArray(rows) ? rows : []);
+    } catch (err) {
+      console.error("[EditStories] load failed:", err);
+      setAllStoriesError(err.message || "Failed to load stories.");
+    } finally {
+      setAllStoriesLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (view === "edit-stories") loadAllStories();
+  }, [view, loadAllStories]);
+
+  const openStoryForEdit = (story) => {
+    setEditingStory(story);
+    setView("editing-story");
+  };
+  const exitEditingStory = async () => {
+    setEditingStory(null);
+    setView("edit-stories");
+    // Refresh the table so the just-edited row reflects the new status.
+    await loadAllStories();
+    await refreshStories();
+  };
 
   const removePerson = (role, idx) => {
     setCredentials((prev) => ({
@@ -3068,7 +3560,58 @@ function EditorPage({ setPage }) {
             <div className="ep-home-card-title">Site Layout</div>
             <div className="ep-home-card-desc">Assign stories to homepage & section slots</div>
           </div>
+          <div className="ep-home-card" onClick={() => setView("edit-stories")}>
+            <div className="ep-home-card-icon">📝</div>
+            <div className="ep-home-card-title">Edit Stories</div>
+            <div className="ep-home-card-desc">Browse, search, and edit every story (drafts → published)</div>
+          </div>
         </div>
+      </div>
+    );
+  }
+
+  if (view === "edit-stories") {
+    return (
+      <div className="editor-page">
+        <button className="ep-back-btn" onClick={() => setView("home")}>
+          ← Back to Dashboard
+        </button>
+        <h1>Edit Stories</h1>
+        {allStoriesError && (
+          <div
+            style={{
+              padding: "10px 14px", borderRadius: 6, fontSize: 13,
+              background: "rgba(200,16,46,0.12)", color: "var(--accent)",
+              border: "1px solid var(--accent)", marginBottom: 14,
+            }}
+          >
+            {allStoriesError}
+          </div>
+        )}
+        {allStoriesLoading ? (
+          <div style={{ padding: 24, color: "var(--text-muted)" }}>Loading stories…</div>
+        ) : (
+          <StoriesTable
+            rows={allStories}
+            columns={["date", "time", "title", "byline", "sections", "status"]}
+            onRowClick={openStoryForEdit}
+            defaultSort={{ key: "date", direction: "desc" }}
+            searchable
+          />
+        )}
+      </div>
+    );
+  }
+
+  if (view === "editing-story" && editingStory) {
+    return (
+      <div className="editor-page">
+        <JournalistPage
+          setPage={setPage}
+          user={user}
+          embeddedStory={editingStory}
+          onClose={exitEditingStory}
+        />
       </div>
     );
   }
@@ -3861,11 +4404,12 @@ export default function App() {
         {page.type === "create-account" && <CreateAccountPage setPage={navigate} />}
         {page.type === "forgot-password" && <ForgotPasswordPage setPage={navigate} />}
         {page.type === "subscribe" && <SubscribeNowPage setPage={navigate} />}
-        {page.type === "journalist" && (user?.role === "journalist" || user?.role === "admin") && (
-          <JournalistPage setPage={navigate} user={user} />
-        )}
+        {page.type === "journalist" &&
+          (user?.role === "journalist" || user?.role === "editor" || user?.role === "admin") && (
+            <JournalistPage setPage={navigate} user={user} />
+          )}
         {page.type === "editor" && (user?.role === "editor" || user?.role === "admin") && (
-          <EditorPage setPage={navigate} />
+          <EditorPage setPage={navigate} user={user} />
         )}
       </main>
       <Footer setPage={navigate} />

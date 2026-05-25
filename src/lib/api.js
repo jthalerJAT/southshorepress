@@ -169,6 +169,57 @@ export async function insertStory(payload) {
   return Array.isArray(data) ? data[0] : data;
 }
 
+// PATCH a single story by id. Used by every status transition
+// (save draft / submit / publish / unpublish / downgrade-to-draft) and by
+// any direct edit of headline / body / photo / etc.
+export async function updateStory(id, payload) {
+  const data = await restFetch(
+    `/rest/v1/stories?id=eq.${encodeURIComponent(id)}`,
+    {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(payload),
+    }
+  );
+  return Array.isArray(data) ? data[0] : data;
+}
+
+// Common select clause used by the editor's all-stories table + drafts list.
+// (fetchPublishedStories has its own copy with the same shape — keeping the
+// two in sync deliberately; if columns ever drift, update both.)
+const EDITOR_SELECT_CLAUSE = [
+  "id", "headline", "subline", "byline", "body", "hero_photo_url",
+  "extra_photo_urls", "categories", "status", "published_at",
+  "created_at", "author_id",
+  "author:profiles!stories_author_id_fkey(display_name)",
+].join(",");
+
+// Fetch every story regardless of status — for the editor's Edit Stories
+// table. RLS must allow editors to read drafts / submitted / unpublished
+// rows (the anon-friendly public read policy is not enough here).
+export async function fetchAllStories() {
+  const url =
+    `/rest/v1/stories` +
+    `?select=${encodeURIComponent(EDITOR_SELECT_CLAUSE)}` +
+    `&order=created_at.desc`;
+  const data = await restFetch(url);
+  return Array.isArray(data) ? data : [];
+}
+
+// Fetch the signed-in journalist's own drafts only. Powers the "My Drafts"
+// list on the Story Editor landing page.
+export async function fetchMyDrafts(userId) {
+  if (!userId) return [];
+  const url =
+    `/rest/v1/stories` +
+    `?select=${encodeURIComponent(EDITOR_SELECT_CLAUSE)}` +
+    `&status=eq.draft` +
+    `&author_id=eq.${encodeURIComponent(userId)}` +
+    `&order=created_at.desc`;
+  const data = await restFetch(url);
+  return Array.isArray(data) ? data : [];
+}
+
 export async function fetchPublishedStories() {
   const selectClause = [
     "id", "headline", "subline", "byline", "body", "hero_photo_url",
