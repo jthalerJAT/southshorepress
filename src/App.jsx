@@ -2072,6 +2072,27 @@ main { padding-top: 8px; }
   margin-bottom: 28px;
 }
 
+/* HeroMedia video wrapper — 16:9 responsive container for the embedded
+   YouTube iframe. Applied on the full-story page (variant="full"); tile
+   contexts render a plain <img> (the YouTube thumbnail), no wrapper. */
+.hero-media-video-wrap {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  height: 0;
+  overflow: hidden;
+  border-radius: var(--radius);
+  margin-bottom: 28px;
+  background: #000;
+}
+.hero-media-video-wrap iframe {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
 .story-page-body {
   font-size: 16px;
   line-height: 1.8;
@@ -2445,7 +2466,7 @@ function HeroCarousel() {
     <div className="hero-carousel">
       {HERO_STORIES.map((story, i) => (
         <div key={story.id} className={`hero-slide ${i === active ? "active" : ""}`}>
-          <img src={story.image} alt={story.headline} />
+          <HeroMedia url={story.image} alt={story.headline} variant="tile" />
           <div className="hero-overlay">
             <div className="hero-cat">{story.categoryLabel}</div>
             <h2 className="hero-headline">{story.headline}</h2>
@@ -2505,10 +2526,11 @@ function StoryRow({ title, stories, setPage }) {
             className={`story-card fade-up fade-up-d${i + 1}`}
             onClick={() => setPage({ type: "story", id: story.id })}
           >
-            <img
+            <HeroMedia
               className="story-card-img"
-              src={story.image}
+              url={story.image}
               alt={story.headline}
+              variant="tile"
             />
             <div className="story-card-body">
               <div className="story-card-cat">{story.categoryLabel}</div>
@@ -2623,10 +2645,11 @@ function CategoryPage({ categoryId, setPage }) {
             className="cat-story-item"
             onClick={() => setPage({ type: "story", id: story.id })}
           >
-            <img
+            <HeroMedia
               className="cat-story-img"
-              src={story.image}
+              url={story.image}
               alt={story.headline}
+              variant="tile"
             />
             <div className="cat-story-content">
               <h2 className="cat-story-headline">{story.headline}</h2>
@@ -2667,7 +2690,7 @@ function StoryPage({ storyId, setPage }) {
       <div className="story-page-meta">
         By {story.author} · {story.date}
       </div>
-      <img className="story-page-img" src={story.image} alt={story.headline} />
+      <HeroMedia className="story-page-img" url={story.image} alt={story.headline} variant="full" />
       <div className="story-page-body">
         {story.isReal && story.body
           ? story.body
@@ -2710,6 +2733,58 @@ function StoryPage({ storyId, setPage }) {
         )}
       </div>
     </div>
+  );
+}
+
+// ─── Hero Media (image OR YouTube) ──────────────────────────────────────────
+// hero_photo_url in the DB stores either an image URL or a YouTube URL. We
+// detect YouTube and swap rendering accordingly:
+//   variant="tile" → cards / homepage / category tiles. Shows the YouTube
+//                     thumbnail (an image) so the tile keeps its existing
+//                     aspect ratio + click-to-story-page behavior.
+//   variant="full" → the story page itself. Embeds the YouTube player in a
+//                     16:9 responsive wrapper.
+
+function extractYouTubeVideoId(url) {
+  if (!url || typeof url !== "string") return null;
+  const patterns = [
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([a-zA-Z0-9_-]{11})/,
+    /youtu\.be\/([a-zA-Z0-9_-]{11})/,
+  ];
+  for (const p of patterns) {
+    const m = url.match(p);
+    if (m) return m[1];
+  }
+  return null;
+}
+
+function HeroMedia({ url, alt, className, variant = "tile" }) {
+  const videoId = extractYouTubeVideoId(url);
+  if (!videoId) {
+    // Plain image — preserves existing className/styling at every call site.
+    return <img src={url} alt={alt || ""} className={className} />;
+  }
+  if (variant === "full") {
+    return (
+      <div className={`hero-media-video-wrap ${className || ""}`}>
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}`}
+          title={alt || "Video"}
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
+    );
+  }
+  // Tile context: thumbnail image so the existing tile layout/click handlers
+  // keep working. hqdefault is 480×360 — plenty for cards.
+  return (
+    <img
+      src={`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`}
+      alt={alt || ""}
+      className={className}
+    />
   );
 }
 
@@ -3104,7 +3179,10 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
       >
         {value ? (
           <>
-            <img src={value} alt="photo" />
+            {/* HeroMedia in tile mode renders YouTube URLs as their thumbnail
+                so the preview doesn't show a broken-image icon when an editor
+                pastes a YouTube link into the Hero Media slot. */}
+            <HeroMedia url={value} alt="media" variant="tile" />
             {onRemove && (
               <button className="jp-photo-remove" onClick={(e) => { e.stopPropagation(); onRemove(); }}>✕</button>
             )}
@@ -3113,12 +3191,12 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
           <>
             <div className="jp-photo-drop-icon">📷</div>
             <div className="jp-photo-drop-label">
-              {label || "Drag & drop an image URL here"}
+              {label || "Drag & drop an image or YouTube URL here"}
             </div>
             <input
               className="jp-input"
               style={{ marginTop: 10, fontSize: 12 }}
-              placeholder="Or paste image URL..."
+              placeholder="Or paste image / YouTube URL..."
               onKeyDown={(e) => {
                 if (e.key === "Enter" && e.target.value) {
                   onChange(e.target.value);
@@ -3269,14 +3347,14 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
           </div>
         </div>
 
-        {/* Hero Photo */}
+        {/* Hero Media — image or YouTube URL */}
         <div>
-          <div className="jp-section-label">Hero Photo</div>
+          <div className="jp-section-label">Hero Media</div>
           <PhotoDrop
             value={heroPhoto}
             onChange={setHeroPhoto}
             onRemove={() => setHeroPhoto("")}
-            label="Drag & drop hero image URL — this appears at the top of the story"
+            label="Drag & drop a hero image or YouTube URL — this appears at the top of the story"
           />
         </div>
 
@@ -3479,7 +3557,7 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
           ) : (
             <>
               {heroPhoto && (
-                <img className="jp-preview-hero" src={heroPhoto} alt="Hero" />
+                <HeroMedia className="jp-preview-hero" url={heroPhoto} alt="Hero" variant="full" />
               )}
               {headline && (
                 <div className="jp-preview-headline">{headline}</div>
@@ -3842,10 +3920,11 @@ function EditorPage({ setPage, user }) {
                   ← Back to Slots
                 </button>
                 <div className="jp-preview-label">Story Preview</div>
-                <img
+                <HeroMedia
                   className="jp-preview-hero"
-                  src={previewStory.image}
+                  url={previewStory.image}
                   alt="hero"
+                  variant="full"
                 />
                 <div className="jp-preview-headline">{previewStory.headline}</div>
                 <div className="jp-preview-subline">{previewStory.excerpt}</div>
