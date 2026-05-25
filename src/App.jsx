@@ -3017,11 +3017,17 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
     }
   };
 
-  // Hard-delete the story from the database. Editor-only, only on an
-  // existing row. Native confirm() keeps the dialog consistent with the
-  // rest of the site and avoids a custom modal for this rare action.
+  // Can-delete rule: editors can delete anything they can open; journalists
+  // can delete their own DRAFTS (the only stories they can open). Brand-new
+  // unsaved rows have no id → nothing to delete.
+  const canDelete =
+    !!editingStory?.id && (isEditor || editingStory.status === "draft");
+
+  // Hard-delete the story from the database. Native confirm() keeps the
+  // dialog consistent with the rest of the site and avoids a custom modal
+  // for this rare action.
   const performDelete = async () => {
-    if (!isEditor || !editingStory?.id || submitting) return;
+    if (!canDelete || submitting) return;
     const ok = window.confirm(
       `Are you sure you want to delete this story?\n\n"${editingStory.headline}"\n\nThis cannot be undone.`
     );
@@ -3388,10 +3394,11 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
               {submitting ? "Submitting…" : "Submit Story"}
             </button>
           )}
-          {/* Delete Story — editor-only, existing rows only. Positioned last
-              so the destructive action sits visually apart from the
-              workflow buttons; native confirm prevents accidental clicks. */}
-          {isEditor && editingStory?.id && (
+          {/* Delete Story — editors on any existing row, journalists on
+              their own drafts. Positioned last so the destructive action
+              sits visually apart from the workflow buttons; native confirm
+              prevents accidental clicks. */}
+          {canDelete && (
             <button
               className="jp-btn jp-btn-danger"
               onClick={performDelete}
