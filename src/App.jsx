@@ -3295,13 +3295,26 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
           >
             {showPreview ? "Hide Preview" : "👁 Preview"}
           </button>
-          {/* Save Draft — always available */}
+          {/* Single "set status to draft" button — label adapts to context.
+              "Save Draft" = saving in-progress work on a draft / new story.
+              "Downgrade to Draft" = explicitly demoting a submitted/
+              published/unpublished story back to the journalist's queue.
+              Same underlying action; the label is just intent signaling. */}
           <button
             className="jp-btn jp-btn-secondary"
             onClick={() => performSave("draft")}
             disabled={submitting}
+            title={
+              editingStory && editingStory.status !== "draft"
+                ? "Demote this story to DRAFT — it will return to the journalist's My Drafts list."
+                : "Save your current work as a draft (hidden from the public site)."
+            }
           >
-            {submitting ? "Saving…" : "Save Draft"}
+            {submitting
+              ? "Saving…"
+              : editingStory && editingStory.status !== "draft"
+              ? "Downgrade to Draft"
+              : "Save Draft"}
           </button>
           {isEditor ? (
             <>
@@ -3317,20 +3330,9 @@ function JournalistPage({ setPage, user, embeddedStory = null, onClose = null })
                   className="jp-btn jp-btn-warn"
                   onClick={() => performSave("unpublished")}
                   disabled={submitting}
+                  title="Take this story off the public site (row stays in the database)."
                 >
                   Unpublish
-                </button>
-              )}
-              {(editingStory?.status === "submitted" ||
-                editingStory?.status === "published" ||
-                editingStory?.status === "unpublished") && (
-                <button
-                  className="jp-btn jp-btn-secondary"
-                  onClick={() => performSave("draft")}
-                  disabled={submitting}
-                  title="Send back to the journalist for revisions"
-                >
-                  Downgrade to Draft
                 </button>
               )}
             </>
